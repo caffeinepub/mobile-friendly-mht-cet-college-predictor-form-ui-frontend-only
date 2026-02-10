@@ -1,13 +1,10 @@
 # Specification
 
 ## Summary
-**Goal:** Add persistent backend storage for MHT-CET cutoff records in the Motoko canister and expose minimal query accessors for inspection/testing.
+**Goal:** Update the app’s displayed title to “MHT-CET College Predictor v2” in both the browser tab and the main page header.
 
 **Planned changes:**
-- Define a public `Cutoff` type in `backend/main.mo` with fields: `college_name`, `branch_name`, `category`, `gender`, `seat_type`, `closing_rank`, `percentile`.
-- Add stable storage in `backend/main.mo` to persist cutoff records across canister upgrades.
-- Add a query method to return the total count of stored cutoff records.
-- Add a query method to return a bounded/paginated list of cutoff records (e.g., via start/limit parameters).
-- Keep the existing `predictAdmission` method compiling and behaving as before (no predictor logic changes).
+- Update `frontend/index.html` `<title>` to exactly `MHT-CET College Predictor v2`.
+- Update the visible H1 header text in `frontend/src/pages/MhtCetPredictorFormPage.tsx` to exactly `MHT-CET College Predictor v2`.
 
-**User-visible outcome:** Backend can be deployed with persistent cutoff storage, and developers/testers can query the total number of stored cutoffs and fetch a limited list for verification; a fresh deployment returns 0 and an empty list.
+**User-visible outcome:** The browser tab title and the top-page header will display “MHT-CET College Predictor v2”, with all existing form and prediction behavior unchanged.

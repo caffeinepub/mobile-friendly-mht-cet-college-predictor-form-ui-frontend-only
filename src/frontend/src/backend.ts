@@ -89,25 +89,31 @@ export class ExternalBlob {
         return this;
     }
 }
-export interface Prediction {
-    branch: string;
-    chance: string;
-    college: string;
+export interface ImportResult {
+    errors: Array<[bigint, string]>;
+    records_imported: bigint;
+    total_rows: bigint;
 }
 export interface CutoffsRecord {
     college_name: string;
     branch_name: string;
-    closing_rank: number;
+    closing_rank: bigint;
     seat_type: string;
     gender: string;
     category: string;
-    percentile: number;
+    percentile: string;
+}
+export interface Prediction {
+    college_name: string;
+    branch_name: string;
+    closing_rank: bigint;
 }
 export interface backendInterface {
     getCutoffsCount(): Promise<bigint>;
     getCutoffsRange(start: bigint, limit: bigint): Promise<Array<CutoffsRecord>>;
     getPredictions(college: string, branch: string, category: string, gender: string, seat_type: string): Promise<Array<Prediction>>;
-    predictAdmission(userPercentile: number): Promise<Array<Prediction>>;
+    importCutoffsCsv(csvText: string): Promise<ImportResult>;
+    predictAdmission(userPercentile: string): Promise<Array<Prediction>>;
 }
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
@@ -153,7 +159,21 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async predictAdmission(arg0: number): Promise<Array<Prediction>> {
+    async importCutoffsCsv(arg0: string): Promise<ImportResult> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.importCutoffsCsv(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.importCutoffsCsv(arg0);
+            return result;
+        }
+    }
+    async predictAdmission(arg0: string): Promise<Array<Prediction>> {
         if (this.processError) {
             try {
                 const result = await this.actor.predictAdmission(arg0);

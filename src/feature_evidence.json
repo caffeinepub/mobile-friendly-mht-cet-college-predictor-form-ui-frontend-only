@@ -1,4 +1,41 @@
 {
   "kind": "feature_evidence_report",
-  "features": []
+  "features": [
+    {
+      "featureId": "feature-update-the-browser-document-title-to-exactly-mht-cet-college-predictor-v2-by-changing-the-title-in-frontend-index-html",
+      "featureTitle": "Update the browser document title to exactly \"MHT-CET College Predictor v2\" by changing the <title> in `frontend/index.html`.",
+      "files": [
+        "frontend/index.html"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-26"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-visible-app-header-title-text-in-frontend-src-pages-mhtcetpredictorformpage-tsx-to-exactly-mht-cet-college-predictor-v2-currently-rendered-as-mht-cet-college-predictor",
+      "featureTitle": "Update the visible app header title text in `frontend/src/pages/MhtCetPredictorFormPage.tsx` to exactly \"MHT-CET College Predictor v2\" (currently rendered as \"MHT-CET College Predictor\").",
+      "files": [
+        "frontend/src/pages/MhtCetPredictorFormPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-27"
+      ],
+      "confidence": "high"
+    }
+  ]
 }

@@ -11,16 +11,21 @@ import { IDL } from '@icp-sdk/core/candid';
 export const CutoffsRecord = IDL.Record({
   'college_name' : IDL.Text,
   'branch_name' : IDL.Text,
-  'closing_rank' : IDL.Float64,
+  'closing_rank' : IDL.Nat,
   'seat_type' : IDL.Text,
   'gender' : IDL.Text,
   'category' : IDL.Text,
-  'percentile' : IDL.Float64,
+  'percentile' : IDL.Text,
 });
 export const Prediction = IDL.Record({
-  'branch' : IDL.Text,
-  'chance' : IDL.Text,
-  'college' : IDL.Text,
+  'college_name' : IDL.Text,
+  'branch_name' : IDL.Text,
+  'closing_rank' : IDL.Nat,
+});
+export const ImportResult = IDL.Record({
+  'errors' : IDL.Vec(IDL.Tuple(IDL.Nat, IDL.Text)),
+  'records_imported' : IDL.Nat,
+  'total_rows' : IDL.Nat,
 });
 
 export const idlService = IDL.Service({
@@ -35,7 +40,8 @@ export const idlService = IDL.Service({
       [IDL.Vec(Prediction)],
       [],
     ),
-  'predictAdmission' : IDL.Func([IDL.Float64], [IDL.Vec(Prediction)], []),
+  'importCutoffsCsv' : IDL.Func([IDL.Text], [ImportResult], []),
+  'predictAdmission' : IDL.Func([IDL.Text], [IDL.Vec(Prediction)], []),
 });
 
 export const idlInitArgs = [];
@@ -44,16 +50,21 @@ export const idlFactory = ({ IDL }) => {
   const CutoffsRecord = IDL.Record({
     'college_name' : IDL.Text,
     'branch_name' : IDL.Text,
-    'closing_rank' : IDL.Float64,
+    'closing_rank' : IDL.Nat,
     'seat_type' : IDL.Text,
     'gender' : IDL.Text,
     'category' : IDL.Text,
-    'percentile' : IDL.Float64,
+    'percentile' : IDL.Text,
   });
   const Prediction = IDL.Record({
-    'branch' : IDL.Text,
-    'chance' : IDL.Text,
-    'college' : IDL.Text,
+    'college_name' : IDL.Text,
+    'branch_name' : IDL.Text,
+    'closing_rank' : IDL.Nat,
+  });
+  const ImportResult = IDL.Record({
+    'errors' : IDL.Vec(IDL.Tuple(IDL.Nat, IDL.Text)),
+    'records_imported' : IDL.Nat,
+    'total_rows' : IDL.Nat,
   });
   
   return IDL.Service({
@@ -68,7 +79,8 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(Prediction)],
         [],
       ),
-    'predictAdmission' : IDL.Func([IDL.Float64], [IDL.Vec(Prediction)], []),
+    'importCutoffsCsv' : IDL.Func([IDL.Text], [ImportResult], []),
+    'predictAdmission' : IDL.Func([IDL.Text], [IDL.Vec(Prediction)], []),
   });
 };
 

@@ -1,59 +1,51 @@
 {
   "kind": "build_request",
-  "title": "Step 1: Add persistent cutoffs storage (schema + basic accessors) in Motoko backend",
+  "title": "Update app title to MHT-CET College Predictor v2",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-7",
-      "text": "Add a new persistent backend data structure representing a `cutoffs` table with the following columns: `college_name`, `branch_name`, `category`, `gender`, `seat_type`, `closing_rank`, `percentile`. Implement this as a Motoko type plus stable storage in `backend/main.mo` so cutoff records persist across canister upgrades.",
-      "target": "backend",
+      "id": "REQ-26",
+      "text": "Update the browser document title to exactly \"MHT-CET College Predictor v2\" by changing the <title> in `frontend/index.html`.",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1",
-          "msg-2"
+          "msg-user-title-change"
         ],
         "quotes": [
-          "Create a database table named cutoffs with columns:\n- college_name\n- branch_name\n- category\n- gender\n- seat_type\n- closing_rank\n- percentile",
-          "User message: \"1\""
+          "Change the title of the app to \"MHT-CET College Predictor v2\"."
         ]
       },
       "acceptanceCriteria": [
-        "`backend/main.mo` defines a public `type Cutoff` (or equivalent) containing fields for: college_name, branch_name, category, gender, seat_type, closing_rank, percentile.",
-        "Cutoff records are stored in stable state (e.g., stable variable) so they survive canister upgrades.",
-        "Existing `predictAdmission` method continues to compile and work as before (no predictor logic changes in this step)."
+        "Opening the app shows the browser tab/title as \"MHT-CET College Predictor v2\".",
+        "`frontend/index.html` contains `<title>MHT-CET College Predictor v2</title>`."
       ]
     },
     {
-      "id": "REQ-8",
-      "text": "Expose minimal backend methods to verify and access the stored cutoff data without requiring CSV upload yet: (1) a query method that returns the total count of cutoff records, and (2) a query method that returns a bounded list (e.g., with start/limit parameters) of cutoff records for inspection/testing.",
-      "target": "backend",
+      "id": "REQ-27",
+      "text": "Update the visible app header title text in `frontend/src/pages/MhtCetPredictorFormPage.tsx` to exactly \"MHT-CET College Predictor v2\" (currently rendered as \"MHT-CET College Predictor\").",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1",
-          "msg-2"
+          "msg-user-title-change"
         ],
         "quotes": [
-          "Create a database table named cutoffs with columns:",
-          "User message: \"1\""
+          "Change the title of the app to \"MHT-CET College Predictor v2\"."
         ]
       },
       "acceptanceCriteria": [
-        "Backend exposes a query method that returns the total number of stored cutoffs.",
-        "Backend exposes a query method to fetch cutoffs with pagination/limits to prevent large responses.",
-        "Calling these methods on a fresh deployment returns 0 count and an empty list."
+        "The top page header H1 in the UI displays \"MHT-CET College Predictor v2\".",
+        "No other UI behavior is changed (form inputs, CSV upload, prediction submission, and results rendering continue to work as before)."
       ]
     }
   ],
   "constraints": [
-    "Backend must remain a single Motoko actor with all logic in `backend/main.mo`.",
-    "Use English for any user-facing text in any added traps/errors.",
-    "Do not implement or require CSV upload in this build step."
+    "Do not modify any files under `frontend/src/components/ui` (read-only).",
+    "Do not modify immutable hook sources: `frontend/src/hooks/useInternetIdentity.ts`, `frontend/src/hooks/useInternetIdentity.tsx`, `frontend/src/hooks/useActor.ts`, `frontend/src/main.tsx`.",
+    "Use English for all user-facing text."
   ],
   "nonGoals": [
-    "CSV upload or any file ingestion UI/API.",
-    "Parsing CAP PDFs or extracting tables from PDFs.",
-    "Updating predictor logic to use cutoffs or implementing Safe/Probable/Dream classification based on cutoff ranks.",
-    "Any frontend changes."
+    "No changes to backend Motoko canisters or any prediction/import logic.",
+    "No visual/theme redesign beyond the title text updates."
   ],
   "imageRequirements": {
     "required": [],

@@ -1,6 +1,37 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Step 1: Add persistent cutoffs storage (schema + basic accessors) in Motoko backend",
-  "requirements": []
+  "title": "Update app title to MHT-CET College Predictor v2",
+  "requirements": [
+    {
+      "id": "REQ-26",
+      "summary": "Update the browser tab/document title to \"MHT-CET College Predictor v2\" in the HTML entry point.",
+      "acceptanceCriteria": [
+        "Opening the app shows the browser tab/title as \"MHT-CET College Predictor v2\".",
+        "`frontend/index.html` contains `<title>MHT-CET College Predictor v2</title>`.\""
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Replace the existing <title> text with exactly \"MHT-CET College Predictor v2\" (no other HTML changes)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-27",
+      "summary": "Update the visible H1 header title on the predictor form page to \"MHT-CET College Predictor v2\".",
+      "acceptanceCriteria": [
+        "The top page header H1 in the UI displays \"MHT-CET College Predictor v2\".",
+        "No other UI behavior is changed (form inputs, CSV upload, prediction submission, and results rendering continue to work as before)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/MhtCetPredictorFormPage.tsx",
+          "operation": "modify",
+          "description": "Update the rendered header H1 string from \"MHT-CET College Predictor\" to exactly \"MHT-CET College Predictor v2\" while leaving all other logic and UI behavior unchanged."
+        }
+      ]
+    }
+  ]
 }
