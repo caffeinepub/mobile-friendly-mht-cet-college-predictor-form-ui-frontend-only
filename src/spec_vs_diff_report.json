@@ -1,0 +1,72 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-10T11:15:30.840Z",
+  "summary": "REQ-4 is only partially implemented: a backend method exists and validates percentile, but it returns the wrong payload shape and wrong dummy rows/values. REQ-5 is partially evidenced (frontend calls backend and manages loading/error state), but the required `estimatedRank` is computed on the client rather than returned by the backend. REQ-6 (updating generated bindings/types for the actor interface) is not evidenced in the diff summary.",
+  "missing_requirements": [
+    {
+      "id": "REQ-4",
+      "requirement": "Backend predictor method must return an estimatedRank derived from percentile (documented placeholder formula) along with prediction rows.",
+      "reason": "The backend method `predictAdmission` returns only `[Prediction]` and does not include `estimatedRank` in its return value.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "requirement": "Method returns exactly three dummy rows: (COEP, Mechanical, Dream), (VJTI, IT, Probable), (PCCOE, Computer, Safe).",
+      "reason": "Backend returns three different colleges/branches (IIT Madras CS, IIT Bombay EE, IIT Delhi Mechanical) and chances are computed conditionally rather than fixed to the specified values.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "requirement": "UI displays the returned `estimatedRank` value near the results (returned from backend).",
+      "reason": "Frontend calculates `estimatedRank` locally instead of receiving it from the backend response; no evidence the backend returns it.",
+      "evidence": [
+        "frontend/src/pages/MhtCetPredictorFormPage.tsx",
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "requirement": "Update generated frontend backend bindings/types (backendInterface used by `useActor`) to include the predictor method signature and response types matching the Motoko interface.",
+      "reason": "No diff evidence shows updates to the generated backend bindings / actor interface typing to add the new method signature/return type; only the page code and backend actor are shown.",
+      "evidence": [
+        "frontend/src/pages/MhtCetPredictorFormPage.tsx"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Backend method named `predictAdmission` returning only `[Prediction]` instead of the requested predictor API shape (e.g., `predict`) that also returns `estimatedRank`.",
+      "reason": "BuildRequest specifies a predictor method (e.g., `predict`) that returns dummy predictions plus an `estimatedRank`; the implemented method name/payload does not match.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/pages/MhtCetPredictorFormPage.tsx"
+      ]
+    },
+    {
+      "description": "Backend computes chance dynamically based on `approxRank` thresholds rather than returning the fixed dummy chances Dream/Probable/Safe for the specified three rows.",
+      "reason": "REQ-4 requires exactly the three dummy rows with fixed chance labels; the diff shows conditional chance logic per row.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "Backend dummy colleges/branches changed to IIT Madras/IIT Bombay/IIT Delhi instead of COEP/VJTI/PCCOE specified by the request.",
+      "reason": "REQ-4 explicitly lists required dummy rows; implemented rows differ.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    }
+  ],
+  "confidence": 0.74,
+  "changed_files": [
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/src/pages/MhtCetPredictorFormPage.tsx",
+    "project_state.json"
+  ]
+}

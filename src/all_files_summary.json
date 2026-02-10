@@ -1,0 +1,15 @@
+{
+  "backend/main.mo": "Motoko backend exposing predictAdmission, computing approx rank from percentile and returning fixed college predictions.",
+  "feature_evidence.json": "Feature evidence listing frontend integration requirements and related files for backend predictor wiring.",
+  "frontend-file-summaries.txt": "Prewritten summaries describing key frontend files and their roles in the predictor UI.",
+  "frontend/index.css": "Global Tailwind base and color variable setup defining light/dark OKLCH palette.",
+  "frontend/index.html": "Basic HTML root file loading the React app via main.tsx.",
+  "frontend/src/App.tsx": "App wrapper rendering the MHT-CET predictor form page.",
+  "frontend/src/hooks/useActor.ts": "Hook creating and caching the backend actor instance, refetching when identity changes.",
+  "frontend/src/hooks/useInternetIdentity.ts": "React context and hooks for Internet Identity authentication and identity lifecycle.",
+  "frontend/src/index.css": "Alternate global Tailwind style sheet defining warm earth-tone color variables.",
+  "frontend/src/main.tsx": "React entry point setting up QueryClient and InternetIdentityProvider before rendering App.",
+  "frontend/src/pages/MhtCetPredictorFormPage.tsx": "Full predictor form UI calling actor.predictAdmission, validating input, showing estimated rank and results.",
+  "frontend/tailwind.config.js": "Tailwind configuration extending colors, fonts, radii, animations, and enabling plugins.",
+  "project_state.json": "Tracks the project’s versioned state, architecture notes, and implemented frontend features for an MHT-CET college predictor. Contains guidance for backend logic, data storage, and integration plans."
+}

@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 5,
+  "summary": "MHT-CET engineering college predictor web app; initial frontend form UI exists and focus is now shifting to making the system functional by adding backend predictor logic using dummy data (percentile -> estimated rank -> sample Safe/Probable/Dream results).",
+  "architectural_notes": [
+    "Use SQLite initially for structured storage of cutoff data extracted from CAP PDFs.",
+    "Cutoff records stored with fields: year, round, college_name, branch_name, seat_type, category, gender, closing_rank, percentile.",
+    "Parse combined cutoff codes (e.g., GOPENH) into gender/category/seat_type attributes.",
+    "Prediction compares user estimated rank vs Round 4 closing ranks using thresholds: ≤0.8×cutoff Safe, ≤cutoff Probable, ≤1.2×cutoff Dream.",
+    "Frontend-first milestone: build UI without backend/logic initially.",
+    "Add a minimal predictor function that maps percentile -> estimated rank using a simple placeholder heuristic (until real data/rank model is implemented).",
+    "Expose a lightweight backend endpoint (or server function) that returns dummy results in the format: College | Branch | Chance, to make the form submission functional end-to-end."
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-create-a-mobile-friendly-frontend-page-that-renders-a-simple-mht-cet-college-predictor-form-with-these-fields-and-labels-cet-percentile-number-input-category-dropdown-open-obc-sc-st-ews-gender-dropdown-male-female-candidature-dropdown-maharashtra-all-india-home-university-dropdown-containing-major-maharashtra-universities-tfws-yes-no-and-a-submit-button",
+      "title": "Create a mobile-friendly frontend page that renders a simple MHT-CET college predictor form with these fields and labels: CET Percentile (number input), Category (dropdown: OPEN, OBC, SC, ST, EWS), Gender (dropdown: Male, Female), Candidature (dropdown: Maharashtra, All India), Home University (dropdown containing major Maharashtra universities), TFWS (yes/no), and a Submit button.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-basic-client-side-form-state-wiring-purely-for-ui-purposes-no-predictor-logic-and-no-backend-calls-inputs-should-be-editable-selections-should-persist-in-the-ui-and-submitting-should-prevent-full-page-reload",
+      "title": "Implement basic client-side form state wiring purely for UI purposes (no predictor logic and no backend calls): inputs should be editable, selections should persist in the UI, and submitting should prevent full page reload.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-coherent-visual-theme-across-the-form-colors-typography-spacing-and-components-that-feels-like-an-education-exam-utility-and-is-consistently-used-throughout-the-page-avoid-blue-purple-as-the-primary-palette",
+      "title": "Apply a coherent visual theme across the form (colors, typography, spacing, and components) that feels like an education/exam utility and is consistently used throughout the page; avoid blue/purple as the primary palette.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-wire-the-existing-frontend-src-pages-mhtcetpredictorformpage-tsx-submit-action-to-call-the-backend-predictor-method-using-the-existing-useactor-hook-and-render-the-returned-results-in-the-ui-after-submission",
+      "title": "Wire the existing `frontend/src/pages/MhtCetPredictorFormPage.tsx` submit action to call the backend predictor method using the existing `useActor` hook, and render the returned results in the UI after submission.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-frontend-can-call-the-new-backend-method-by-updating-the-generated-frontend-backend-bindings-types-the-backendinterface-used-by-frontend-src-hooks-useactor-ts-to-include-the-predictor-method-signature-and-response-types",
+      "title": "Ensure the frontend can call the new backend method by updating the generated frontend backend bindings/types (the `backendInterface` used by `frontend/src/hooks/useActor.ts`) to include the predictor method signature and response types.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Build a simple mobile-friendly frontend form UI for MHT-CET college predictor (percentile, category, gender, candidature, home university, TFWS) with submit button; no backend/logic yet",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Ingest/upload CAP Round 1–4 cutoff PDFs (Maharashtra + All India seats) and extract cutoff tables into structured data",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Create SQLite database schema/table for cutoffs (year, round, college, branch, seat_type, category, gender, closing_rank, percentile) including parsing codes like GOPENH",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Implement predictor logic: percentile->estimated rank, filter relevant cutoffs, compare to Round 4 closing ranks, classify Safe/Probable/Dream with thresholds",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Create results page/table showing college, branch, cutoff percentile, and chance with color coding (Safe green, Probable orange, Dream red)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Prepare the app for deployment as a simple web app",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Add simple backend predictor logic for the existing form: convert percentile to estimated rank (placeholder), return dummy/sample college+branch+chance results, and wire it to the UI so submission shows results",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Implement a backend predictor method in `backend/main.mo` that accepts the user’s percentile input, converts it to an estimated rank, and returns dummy/sample prediction results with fields `college`, `branch`, and `chance` (values like Dream/Probable/Safe).",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "status": "pending"
+    }
+  ],
+  "projectName": "Mobile-friendly MHT-CET college predictor form UI (frontend only)",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

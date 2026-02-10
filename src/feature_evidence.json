@@ -1,0 +1,39 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-wire-the-existing-frontend-src-pages-mhtcetpredictorformpage-tsx-submit-action-to-call-the-backend-predictor-method-using-the-existing-useactor-hook-and-render-the-returned-results-in-the-ui-after-submission",
+      "featureTitle": "Wire the existing `frontend/src/pages/MhtCetPredictorFormPage.tsx` submit action to call the backend predictor method using the existing `useActor` hook, and render the returned results in the UI after submission.",
+      "files": [
+        "frontend/src/pages/MhtCetPredictorFormPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-ensure-the-frontend-can-call-the-new-backend-method-by-updating-the-generated-frontend-backend-bindings-types-the-backendinterface-used-by-frontend-src-hooks-useactor-ts-to-include-the-predictor-method-signature-and-response-types",
+      "featureTitle": "Ensure the frontend can call the new backend method by updating the generated frontend backend bindings/types (the `backendInterface` used by `frontend/src/hooks/useActor.ts`) to include the predictor method signature and response types.",
+      "files": [],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
+      ],
+      "confidence": "high"
+    }
+  ]
+}
