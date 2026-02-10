@@ -1,42 +1,6 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Wire MHT-CET predictor form to backend predictor call and typed results rendering",
-  "requirements": [
-    {
-      "id": "REQ-5",
-      "summary": "Update MhtCetPredictorFormPage to call the backend predictor via useActor and render loading, success (estimated rank + table), and error states without page reload.",
-      "acceptanceCriteria": [
-        "Submitting the form performs a backend call instead of only `console.log`.",
-        "The page shows a loading state on submit (e.g., disable the submit button and/or show loading text) until the backend responds.",
-        "On success, the UI renders a results section containing a table with columns: College, Branch, Chance, and rows matching the backend dummy data.",
-        "The UI also displays the returned `estimatedRank` value near the results (English user-facing text).",
-        "On backend error, the UI displays an English error message without crashing and allows retrying submission.",
-        "No full page reload occurs on submit (still `preventDefault`)."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/MhtCetPredictorFormPage.tsx",
-          "operation": "modify",
-          "description": "Use the core-infrastructure `useActor` hook to call the backend predictor method on submit, replacing the current console.log handler. Add local UI state for loading, error, and results; disable the submit button and/or show loading text while awaiting the response; render the returned estimated rank in English and a results table (College/Branch/Chance) using composed shadcn-ui primitives already imported (Card/Button/etc.) without editing `frontend/src/components/ui`. Ensure submission remains SPA-safe with preventDefault and supports retry after errors. Verify the component's usage instructions before implementing."
-        }
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "summary": "Update the frontend backend bindings/types so the actor interface includes the new predictor method and strongly-typed response payload used by the form page.",
-      "acceptanceCriteria": [
-        "TypeScript compilation succeeds with no missing-method/type errors for the new backend call.",
-        "The actor type (`backendInterface`) includes the predictor method with correct argument and return types matching the Motoko canister interface.",
-        "The frontend code calls the backend method without any `any`-typed escape hatches for the response payload."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/backend.d.ts",
-          "operation": "modify",
-          "description": "Extend the generated backend TypeScript declarations to include the new predictor method signature and response types (including `estimatedRank` and an array of `{ college, branch, chance }` predictions). Keep types fully explicit so the page can call the method without `any`, and represent backend errors in the type (Result-style variant) if the canister interface uses it. Verify the component's usage instructions before implementing."
-        }
-      ]
-    }
-  ]
+  "title": "Step 1: Add persistent cutoffs storage (schema + basic accessors) in Motoko backend",
+  "requirements": []
 }

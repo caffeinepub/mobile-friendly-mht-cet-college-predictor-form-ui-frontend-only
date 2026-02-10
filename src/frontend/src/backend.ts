@@ -94,11 +94,65 @@ export interface Prediction {
     chance: string;
     college: string;
 }
+export interface CutoffsRecord {
+    college_name: string;
+    branch_name: string;
+    closing_rank: number;
+    seat_type: string;
+    gender: string;
+    category: string;
+    percentile: number;
+}
 export interface backendInterface {
+    getCutoffsCount(): Promise<bigint>;
+    getCutoffsRange(start: bigint, limit: bigint): Promise<Array<CutoffsRecord>>;
+    getPredictions(college: string, branch: string, category: string, gender: string, seat_type: string): Promise<Array<Prediction>>;
     predictAdmission(userPercentile: number): Promise<Array<Prediction>>;
 }
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
+    async getCutoffsCount(): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getCutoffsCount();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getCutoffsCount();
+            return result;
+        }
+    }
+    async getCutoffsRange(arg0: bigint, arg1: bigint): Promise<Array<CutoffsRecord>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getCutoffsRange(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getCutoffsRange(arg0, arg1);
+            return result;
+        }
+    }
+    async getPredictions(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string): Promise<Array<Prediction>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getPredictions(arg0, arg1, arg2, arg3, arg4);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getPredictions(arg0, arg1, arg2, arg3, arg4);
+            return result;
+        }
+    }
     async predictAdmission(arg0: number): Promise<Array<Prediction>> {
         if (this.processError) {
             try {

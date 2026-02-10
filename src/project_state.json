@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 5,
+  "projectStateVersion": 7,
   "summary": "MHT-CET engineering college predictor web app; initial frontend form UI exists and focus is now shifting to making the system functional by adding backend predictor logic using dummy data (percentile -> estimated rank -> sample Safe/Probable/Dream results).",
   "architectural_notes": [
     "Use SQLite initially for structured storage of cutoff data extracted from CAP PDFs.",
@@ -9,7 +9,8 @@
     "Prediction compares user estimated rank vs Round 4 closing ranks using thresholds: ≤0.8×cutoff Safe, ≤cutoff Probable, ≤1.2×cutoff Dream.",
     "Frontend-first milestone: build UI without backend/logic initially.",
     "Add a minimal predictor function that maps percentile -> estimated rank using a simple placeholder heuristic (until real data/rank model is implemented).",
-    "Expose a lightweight backend endpoint (or server function) that returns dummy results in the format: College | Branch | Chance, to make the form submission functional end-to-end."
+    "Expose a lightweight backend endpoint (or server function) that returns dummy results in the format: College | Branch | Chance, to make the form submission functional end-to-end.",
+    "User requested real cutoff data support via a `cutoffs` database table (columns: college_name, branch_name, category, gender, seat_type, closing_rank, percentile); implementation to proceed in smaller steps starting with creating the table only."
   ],
   "known_issues": [],
   "isFixRequest": false,
@@ -103,6 +104,22 @@
       "summary": "Implement a backend predictor method in `backend/main.mo` that accepts the user’s percentile input, converts it to an estimated rank, and returns dummy/sample prediction results with fields `college`, `branch`, and `chance` (values like Dream/Probable/Safe).",
       "reqIds": [
         "REQ-4"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Add a new persistent backend data structure representing a `cutoffs` table with the following columns: `college_name`, `branch_name`, `category`, `gender`, `seat_type`, `closing_rank`, `percentile`. Implement this as a Motoko type plus stable storage in `backend/main.mo` so cutoff records persist across canister upgrades.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Expose minimal backend methods to verify and access the stored cutoff data without requiring CSV upload yet: (1) a query method that returns the total count of cutoff records, and (2) a query method that returns a bounded list (e.g., with start/limit parameters) of cutoff records for inspection/testing.",
+      "reqIds": [
+        "REQ-8"
       ],
       "status": "pending"
     }

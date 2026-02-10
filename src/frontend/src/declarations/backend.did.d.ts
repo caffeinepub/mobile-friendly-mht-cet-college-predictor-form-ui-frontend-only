@@ -10,12 +10,27 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface CutoffsRecord {
+  'college_name' : string,
+  'branch_name' : string,
+  'closing_rank' : number,
+  'seat_type' : string,
+  'gender' : string,
+  'category' : string,
+  'percentile' : number,
+}
 export interface Prediction {
   'branch' : string,
   'chance' : string,
   'college' : string,
 }
 export interface _SERVICE {
+  'getCutoffsCount' : ActorMethod<[], bigint>,
+  'getCutoffsRange' : ActorMethod<[bigint, bigint], Array<CutoffsRecord>>,
+  'getPredictions' : ActorMethod<
+    [string, string, string, string, string],
+    Array<Prediction>
+  >,
   'predictAdmission' : ActorMethod<[number], Array<Prediction>>,
 }
 export declare const idlService: IDL.ServiceClass;

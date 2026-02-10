@@ -12,6 +12,18 @@ export interface Prediction {
     chance: string;
     college: string;
 }
+export interface CutoffsRecord {
+    college_name: string;
+    branch_name: string;
+    closing_rank: number;
+    seat_type: string;
+    gender: string;
+    category: string;
+    percentile: number;
+}
 export interface backendInterface {
+    getCutoffsCount(): Promise<bigint>;
+    getCutoffsRange(start: bigint, limit: bigint): Promise<Array<CutoffsRecord>>;
+    getPredictions(college: string, branch: string, category: string, gender: string, seat_type: string): Promise<Array<Prediction>>;
     predictAdmission(userPercentile: number): Promise<Array<Prediction>>;
 }

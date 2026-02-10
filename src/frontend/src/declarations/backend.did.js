@@ -8,6 +8,15 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const CutoffsRecord = IDL.Record({
+  'college_name' : IDL.Text,
+  'branch_name' : IDL.Text,
+  'closing_rank' : IDL.Float64,
+  'seat_type' : IDL.Text,
+  'gender' : IDL.Text,
+  'category' : IDL.Text,
+  'percentile' : IDL.Float64,
+});
 export const Prediction = IDL.Record({
   'branch' : IDL.Text,
   'chance' : IDL.Text,
@@ -15,12 +24,32 @@ export const Prediction = IDL.Record({
 });
 
 export const idlService = IDL.Service({
+  'getCutoffsCount' : IDL.Func([], [IDL.Nat], ['query']),
+  'getCutoffsRange' : IDL.Func(
+      [IDL.Nat, IDL.Nat],
+      [IDL.Vec(CutoffsRecord)],
+      ['query'],
+    ),
+  'getPredictions' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Vec(Prediction)],
+      [],
+    ),
   'predictAdmission' : IDL.Func([IDL.Float64], [IDL.Vec(Prediction)], []),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const CutoffsRecord = IDL.Record({
+    'college_name' : IDL.Text,
+    'branch_name' : IDL.Text,
+    'closing_rank' : IDL.Float64,
+    'seat_type' : IDL.Text,
+    'gender' : IDL.Text,
+    'category' : IDL.Text,
+    'percentile' : IDL.Float64,
+  });
   const Prediction = IDL.Record({
     'branch' : IDL.Text,
     'chance' : IDL.Text,
@@ -28,6 +57,17 @@ export const idlFactory = ({ IDL }) => {
   });
   
   return IDL.Service({
+    'getCutoffsCount' : IDL.Func([], [IDL.Nat], ['query']),
+    'getCutoffsRange' : IDL.Func(
+        [IDL.Nat, IDL.Nat],
+        [IDL.Vec(CutoffsRecord)],
+        ['query'],
+      ),
+    'getPredictions' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Vec(Prediction)],
+        [],
+      ),
     'predictAdmission' : IDL.Func([IDL.Float64], [IDL.Vec(Prediction)], []),
   });
 };

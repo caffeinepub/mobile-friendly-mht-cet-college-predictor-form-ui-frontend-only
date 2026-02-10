@@ -1,92 +1,62 @@
 {
   "kind": "build_request",
-  "title": "Add backend predictor logic and wire it to the existing MHT-CET form",
+  "title": "Step 1: Add persistent cutoffs storage (schema + basic accessors) in Motoko backend",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-4",
-      "text": "Implement a backend predictor method in `backend/main.mo` that accepts the user’s percentile input, converts it to an estimated rank, and returns dummy/sample prediction results with fields `college`, `branch`, and `chance` (values like Dream/Probable/Safe).",
+      "id": "REQ-7",
+      "text": "Add a new persistent backend data structure representing a `cutoffs` table with the following columns: `college_name`, `branch_name`, `category`, `gender`, `seat_type`, `closing_rank`, `percentile`. Implement this as a Motoko type plus stable storage in `backend/main.mo` so cutoff records persist across canister upgrades.",
       "target": "backend",
       "source": {
         "messageIds": [
-          "recent-messages"
+          "msg-1",
+          "msg-2"
         ],
         "quotes": [
-          "Now add backend logic to the existing predictor form.\n\nCreate a simple predictor function that:\n1. Takes percentile input.\n2. Converts it into an estimated rank.\n3. Returns sample results in this format:\n\nCollege | Branch | Chance\nCOEP | Mechanical | Dream\nVJTI | IT | Probable\nPCCOE | Computer | Safe\n\nUse dummy data for now.\nJust make the system functional."
+          "Create a database table named cutoffs with columns:\n- college_name\n- branch_name\n- category\n- gender\n- seat_type\n- closing_rank\n- percentile",
+          "User message: \"1\""
         ]
       },
       "acceptanceCriteria": [
-        "Backend exposes a public canister method (e.g., `predict`) callable from the frontend.",
-        "Method input includes at minimum the percentile value from the form (numeric).",
-        "Method computes and returns an `estimatedRank` derived from the percentile using a simple deterministic placeholder formula (documented in code comments).",
-        "Method returns an array/list of exactly the three dummy rows: (COEP, Mechanical, Dream), (VJTI, IT, Probable), (PCCOE, Computer, Safe).",
-        "If percentile is missing/out of range/not parseable, method returns a clear error (trap or Result-style error) rather than silently succeeding with nonsense values."
+        "`backend/main.mo` defines a public `type Cutoff` (or equivalent) containing fields for: college_name, branch_name, category, gender, seat_type, closing_rank, percentile.",
+        "Cutoff records are stored in stable state (e.g., stable variable) so they survive canister upgrades.",
+        "Existing `predictAdmission` method continues to compile and work as before (no predictor logic changes in this step)."
       ]
     },
     {
-      "id": "REQ-5",
-      "text": "Wire the existing `frontend/src/pages/MhtCetPredictorFormPage.tsx` submit action to call the backend predictor method using the existing `useActor` hook, and render the returned results in the UI after submission.",
-      "target": "frontend",
+      "id": "REQ-8",
+      "text": "Expose minimal backend methods to verify and access the stored cutoff data without requiring CSV upload yet: (1) a query method that returns the total count of cutoff records, and (2) a query method that returns a bounded list (e.g., with start/limit parameters) of cutoff records for inspection/testing.",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "recent-messages"
+          "msg-1",
+          "msg-2"
         ],
         "quotes": [
-          "Just make the system functional."
+          "Create a database table named cutoffs with columns:",
+          "User message: \"1\""
         ]
       },
       "acceptanceCriteria": [
-        "Submitting the form performs a backend call instead of only `console.log`.",
-        "The page shows a loading state on submit (e.g., disable the submit button and/or show loading text) until the backend responds.",
-        "On success, the UI renders a results section containing a table with columns: College, Branch, Chance, and rows matching the backend dummy data.",
-        "The UI also displays the returned `estimatedRank` value near the results (English user-facing text).",
-        "On backend error, the UI displays an English error message without crashing and allows retrying submission.",
-        "No full page reload occurs on submit (still `preventDefault`)."
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "text": "Ensure the frontend can call the new backend method by updating the generated frontend backend bindings/types (the `backendInterface` used by `frontend/src/hooks/useActor.ts`) to include the predictor method signature and response types.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "recent-messages"
-        ],
-        "quotes": [
-          "Now add backend logic to the existing predictor form."
-        ]
-      },
-      "acceptanceCriteria": [
-        "TypeScript compilation succeeds with no missing-method/type errors for the new backend call.",
-        "The actor type (`backendInterface`) includes the predictor method with correct argument and return types matching the Motoko canister interface.",
-        "The frontend code calls the backend method without any `any`-typed escape hatches for the response payload."
+        "Backend exposes a query method that returns the total number of stored cutoffs.",
+        "Backend exposes a query method to fetch cutoffs with pagination/limits to prevent large responses.",
+        "Calling these methods on a fresh deployment returns 0 count and an empty list."
       ]
     }
   ],
   "constraints": [
-    "Backend must remain a single Motoko actor in `backend/main.mo` (no additional backend services).",
-    "Do not edit files under `frontend/src/components/ui` (compose existing UI components only).",
-    "Do not modify immutable paths: `frontend/src/hooks/useInternetIdentity.ts`, `frontend/src/hooks/useInternetIdentity.tsx`, `frontend/src/hooks/useActor.ts`, `frontend/src/main.tsx`, `frontend/src/components/ui`.",
-    "Use English for any user-facing text."
+    "Backend must remain a single Motoko actor with all logic in `backend/main.mo`.",
+    "Use English for any user-facing text in any added traps/errors.",
+    "Do not implement or require CSV upload in this build step."
   ],
   "nonGoals": [
-    "Do not implement real cutoff ingestion, PDF parsing, or any SQLite storage in this change.",
-    "Do not implement full prediction logic based on CAP cutoffs; dummy/sample data is sufficient.",
-    "Do not add new authentication flows beyond existing Internet Identity support.",
-    "Do not add a separate results route/page unless strictly necessary; rendering results on the same page is acceptable for this request."
+    "CSV upload or any file ingestion UI/API.",
+    "Parsing CAP PDFs or extracting tables from PDFs.",
+    "Updating predictor logic to use cutoffs or implementing Safe/Probable/Dream classification based on cutoff ranks.",
+    "Any frontend changes."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

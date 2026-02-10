@@ -1,58 +1,41 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-10T11:15:30.843Z",
+  "generatedAt": "2026-02-10T11:29:54.842Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 3,
-    "implemented": 2,
+    "total": 2,
+    "implemented": 0,
     "items": [
       {
-        "id": "REQ-4",
-        "summary": "Implement a backend predictor method in `backend/main.mo` that accepts the user’s percentile input, converts it to an estimated rank, and returns dummy/sample prediction results with fields `college`, `branch`, and `chance` (values like Dream/Probable/Safe).",
+        "id": "REQ-7",
+        "summary": "Add a new persistent backend data structure representing a `cutoffs` table with the following columns: `college_name`, `branch_name`, `category`, `gender`, `seat_type`, `closing_rank`, `percentile`. Implement this as a Motoko type plus stable storage in `backend/main.mo` so cutoff records persist across canister upgrades.",
         "status": "unknown",
         "plannedFiles": [],
         "matchedFiles": []
       },
       {
-        "id": "REQ-5",
-        "summary": "Wire the existing `frontend/src/pages/MhtCetPredictorFormPage.tsx` submit action to call the backend predictor method using the existing `useActor` hook, and render the returned results in the UI after submission.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/MhtCetPredictorFormPage.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/MhtCetPredictorFormPage.tsx"
-        ]
-      },
-      {
-        "id": "REQ-6",
-        "summary": "Ensure the frontend can call the new backend method by updating the generated frontend backend bindings/types (the `backendInterface` used by `frontend/src/hooks/useActor.ts`) to include the predictor method signature and response types.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/backend.d.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/backend.d.ts"
-        ]
+        "id": "REQ-8",
+        "summary": "Expose minimal backend methods to verify and access the stored cutoff data without requiring CSV upload yet: (1) a query method that returns the total count of cutoff records, and (2) a query method that returns a bounded list (e.g., with start/limit parameters) of cutoff records for inspection/testing.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       }
     ]
   },
   "changedFiles": [
     "backend/main.mo",
+    "backend/migration.mo",
     "build-request.json",
-    "build-template/README.md",
     "feature_evidence.json",
-    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
     "frontend/src/backend.d.ts",
     "frontend/src/backend.ts",
     "frontend/src/declarations/backend.did.d.ts",
     "frontend/src/declarations/backend.did.js",
-    "frontend/src/pages/MhtCetPredictorFormPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",
