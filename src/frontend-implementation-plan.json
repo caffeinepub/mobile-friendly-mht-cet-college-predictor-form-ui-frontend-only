@@ -1,35 +1,20 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Update app title to MHT-CET College Predictor v2",
+  "title": "Predictions UI: show only eligible colleges returned by backend",
   "requirements": [
     {
-      "id": "REQ-26",
-      "summary": "Update the browser tab/document title to \"MHT-CET College Predictor v2\" in the HTML entry point.",
+      "id": "REQ-2",
+      "summary": "Update the predictions results UI copy and table rendering to assume the backend returns only eligible colleges (predicted_rank <= closing_rank) and present the filtered list correctly.",
       "acceptanceCriteria": [
-        "Opening the app shows the browser tab/title as \"MHT-CET College Predictor v2\".",
-        "`frontend/index.html` contains `<title>MHT-CET College Predictor v2</title>`.\""
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/index.html",
-          "operation": "modify",
-          "description": "Replace the existing <title> text with exactly \"MHT-CET College Predictor v2\" (no other HTML changes)."
-        }
-      ]
-    },
-    {
-      "id": "REQ-27",
-      "summary": "Update the visible H1 header title on the predictor form page to \"MHT-CET College Predictor v2\".",
-      "acceptanceCriteria": [
-        "The top page header H1 in the UI displays \"MHT-CET College Predictor v2\".",
-        "No other UI behavior is changed (form inputs, CSV upload, prediction submission, and results rendering continue to work as before)."
+        "After running predictions, the table only displays colleges that meet predicted_rank <= closing_rank (as returned by the backend).",
+        "Any user-facing text describing results is in English and does not imply that non-eligible records are shown."
       ],
       "file_operations": [
         {
           "path": "frontend/src/pages/MhtCetPredictorFormPage.tsx",
           "operation": "modify",
-          "description": "Update the rendered header H1 string from \"MHT-CET College Predictor\" to exactly \"MHT-CET College Predictor v2\" while leaving all other logic and UI behavior unchanged."
+          "description": "Adjust the Results Section to reflect that returned predictions are already eligibility-filtered by the backend (predicted_rank <= closing_rank): update any headings/descriptions and empty-state messages to explicitly say the list contains eligible options only; ensure the table renders correctly when only eligible rows are present (including consistent rendering of predicted_rank/closing_rank and any existing eligibility indicator fields). If the UI currently implies it shows all evaluated colleges, revise the English copy accordingly. Use existing shadcn-ui components already present in this file (e.g., Table, Alert, Badge, Card) to present the updated messaging and results styling; verify the component's usage instructions before implementing."
         }
       ]
     }

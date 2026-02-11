@@ -1,10 +1,10 @@
 # Specification
 
 ## Summary
-**Goal:** Update the app’s displayed title to “MHT-CET College Predictor v2” in both the browser tab and the main page header.
+**Goal:** Return and display only eligible college predictions where the predicted rank is less than or equal to each cutoff record’s closing rank.
 
 **Planned changes:**
-- Update `frontend/index.html` `<title>` to exactly `MHT-CET College Predictor v2`.
-- Update the visible H1 header text in `frontend/src/pages/MhtCetPredictorFormPage.tsx` to exactly `MHT-CET College Predictor v2`.
+- Update the backend prediction response to filter out cutoff records where `predicted_rank > closing_rank`, returning only eligible records per cutoff record comparison.
+- Update the predictions UI copy/behavior to reflect that only eligible colleges are shown and ensure the results table renders correctly with the backend-filtered list.
 
-**User-visible outcome:** The browser tab title and the top-page header will display “MHT-CET College Predictor v2”, with all existing form and prediction behavior unchanged.
+**User-visible outcome:** After running predictions, users see a results table containing only colleges they are eligible for (where `predicted_rank <= closing_rank`), with English-only user-facing text that does not imply non-eligible records are included.

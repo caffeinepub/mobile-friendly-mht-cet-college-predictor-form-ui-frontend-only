@@ -101,20 +101,26 @@ export interface CutoffsRecord {
     seat_type: string;
     gender: string;
     category: string;
-    percentile: string;
 }
 export interface Prediction {
     college_name: string;
     branch_name: string;
+    predicted_rank: bigint;
     closing_rank: bigint;
+    eligible: boolean;
+}
+export enum Candidature {
+    allIndia = "allIndia",
+    maharashtra = "maharashtra"
 }
 export interface backendInterface {
     getCutoffsCount(): Promise<bigint>;
     getCutoffsRange(start: bigint, limit: bigint): Promise<Array<CutoffsRecord>>;
     getPredictions(college: string, branch: string, category: string, gender: string, seat_type: string): Promise<Array<Prediction>>;
     importCutoffsCsv(csvText: string): Promise<ImportResult>;
-    predictAdmission(userPercentile: string): Promise<Array<Prediction>>;
+    predictAdmission(userPercentile: string, candidature: Candidature): Promise<Array<Prediction>>;
 }
+import type { Candidature as _Candidature } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async getCutoffsCount(): Promise<bigint> {
@@ -173,20 +179,34 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async predictAdmission(arg0: string): Promise<Array<Prediction>> {
+    async predictAdmission(arg0: string, arg1: Candidature): Promise<Array<Prediction>> {
         if (this.processError) {
             try {
-                const result = await this.actor.predictAdmission(arg0);
+                const result = await this.actor.predictAdmission(arg0, to_candid_Candidature_n1(this._uploadFile, this._downloadFile, arg1));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.predictAdmission(arg0);
+            const result = await this.actor.predictAdmission(arg0, to_candid_Candidature_n1(this._uploadFile, this._downloadFile, arg1));
             return result;
         }
     }
+}
+function to_candid_Candidature_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Candidature): _Candidature {
+    return to_candid_variant_n2(_uploadFile, _downloadFile, value);
+}
+function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Candidature): {
+    allIndia: null;
+} | {
+    maharashtra: null;
+} {
+    return value == Candidature.allIndia ? {
+        allIndia: null
+    } : value == Candidature.maharashtra ? {
+        maharashtra: null
+    } : value;
 }
 export interface CreateActorOptions {
     agent?: Agent;

@@ -1,54 +1,66 @@
 {
   "kind": "build_request",
-  "title": "Update app title to MHT-CET College Predictor v2",
+  "title": "Return only eligible colleges when predicted_rank <= closing_rank",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-26",
-      "text": "Update the browser document title to exactly \"MHT-CET College Predictor v2\" by changing the <title> in `frontend/index.html`.",
-      "target": "frontend",
+      "id": "REQ-1",
+      "text": "Update the backend prediction flow so that for each cutoff record, the system includes that record in the returned predictions only when predicted_rank is less than or equal to that record’s closing_rank (i.e., filter out non-eligible records instead of returning all evaluated records).",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-user-title-change"
+          "msg-4"
         ],
         "quotes": [
-          "Change the title of the app to \"MHT-CET College Predictor v2\"."
+          "For each cutoff record, check if predicted_rank is less than or equal to closing_rank.\nIf yes, include that college in the results."
         ]
       },
       "acceptanceCriteria": [
-        "Opening the app shows the browser tab/title as \"MHT-CET College Predictor v2\".",
-        "`frontend/index.html` contains `<title>MHT-CET College Predictor v2</title>`."
+        "Given imported cutoff data for a candidature, predictAdmission returns only predictions where predicted_rank <= closing_rank.",
+        "No predictions with predicted_rank > closing_rank are present in the predictAdmission response.",
+        "Eligible comparisons are performed per cutoff record (not globally), using that record’s closing_rank."
       ]
     },
     {
-      "id": "REQ-27",
-      "text": "Update the visible app header title text in `frontend/src/pages/MhtCetPredictorFormPage.tsx` to exactly \"MHT-CET College Predictor v2\" (currently rendered as \"MHT-CET College Predictor\").",
+      "id": "REQ-2",
+      "text": "Adjust the predictions UI to reflect that the results list contains only eligible colleges (predicted_rank <= closing_rank) and ensure the table renders correctly with the filtered results returned by the backend.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-title-change"
+          "msg-4"
         ],
         "quotes": [
-          "Change the title of the app to \"MHT-CET College Predictor v2\"."
+          "If yes, include that college in the results."
         ]
       },
       "acceptanceCriteria": [
-        "The top page header H1 in the UI displays \"MHT-CET College Predictor v2\".",
-        "No other UI behavior is changed (form inputs, CSV upload, prediction submission, and results rendering continue to work as before)."
+        "After running predictions, the table only displays colleges that meet predicted_rank <= closing_rank (as returned by the backend).",
+        "Any user-facing text describing results is in English and does not imply that non-eligible records are shown."
       ]
     }
   ],
   "constraints": [
-    "Do not modify any files under `frontend/src/components/ui` (read-only).",
-    "Do not modify immutable hook sources: `frontend/src/hooks/useInternetIdentity.ts`, `frontend/src/hooks/useInternetIdentity.tsx`, `frontend/src/hooks/useActor.ts`, `frontend/src/main.tsx`.",
-    "Use English for all user-facing text."
+    "Backend must remain a single Motoko actor in backend/main.mo (no additional backend services).",
+    "Do not edit frontend files under frontend/src/components/ui or other immutable paths listed in SYSTEM_CONTEXT.",
+    "Use English for any user-facing text."
   ],
   "nonGoals": [
-    "No changes to backend Motoko canisters or any prediction/import logic.",
-    "No visual/theme redesign beyond the title text updates."
+    "Changing the rank computation formula (computeRank) or percentile validation rules.",
+    "Adding new authentication methods beyond Internet Identity.",
+    "Adding external databases or third-party services."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
   }
 }

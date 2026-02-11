@@ -1,4 +1,4 @@
-import { useState, FormEvent, ChangeEvent } from 'react';
+import { useState, FormEvent, ChangeEvent, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { GraduationCap, Loader2, AlertCircle, Upload, CheckCircle2, Database } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { GraduationCap, Loader2, AlertCircle, Upload, CheckCircle2, Database, Info } from 'lucide-react';
 import { useActor } from '@/hooks/useActor';
-import type { Prediction, ImportResult } from '@/backend';
+import { Candidature, type Prediction, type ImportResult } from '@/backend';
 import { Separator } from '@/components/ui/separator';
 
 export default function MhtCetPredictorFormPage() {
@@ -31,8 +32,27 @@ export default function MhtCetPredictorFormPage() {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const [cutoffsCount, setCutoffsCount] = useState<bigint | null>(null);
+  const [isCheckingCutoffs, setIsCheckingCutoffs] = useState<boolean>(true);
 
   const { actor } = useActor();
+
+  // Check cutoffs count on mount
+  useEffect(() => {
+    const checkCutoffsCount = async () => {
+      if (!actor) return;
+      
+      try {
+        const count = await actor.getCutoffsCount();
+        setCutoffsCount(count);
+      } catch (err) {
+        console.error('Failed to fetch cutoffs count:', err);
+      } finally {
+        setIsCheckingCutoffs(false);
+      }
+    };
+
+    checkCutoffsCount();
+  }, [actor]);
 
   const handlePercentileChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPercentile(e.target.value);
@@ -46,9 +66,20 @@ export default function MhtCetPredictorFormPage() {
       return;
     }
 
+    // Check if cutoff data has been imported
+    if (cutoffsCount === null || cutoffsCount === BigInt(0)) {
+      setError('No cutoff data available. Please import cutoff data using the CSV upload section above before running predictions.');
+      return;
+    }
+
     const percentileValue = parseFloat(percentile);
     if (isNaN(percentileValue) || percentileValue < 0 || percentileValue > 100) {
       setError('Please enter a valid percentile between 0 and 100.');
+      return;
+    }
+
+    if (!candidature) {
+      setError('Please select a candidature type (Maharashtra or All India).');
       return;
     }
 
@@ -58,17 +89,26 @@ export default function MhtCetPredictorFormPage() {
     setEstimatedRank(null);
 
     try {
-      // Pass percentile as string to backend (backend expects Text/string)
-      const results = await actor.predictAdmission(percentile);
+      // Map UI candidature value to backend enum
+      const candidatureEnum = candidature === 'Maharashtra' 
+        ? Candidature.maharashtra 
+        : Candidature.allIndia;
+
+      // Pass percentile and candidature to backend
+      const results = await actor.predictAdmission(percentile, candidatureEnum);
       
-      // Calculate estimated rank from percentile
-      // Truncate decimal percentile to integer first, then apply formula
-      // Formula: rank = (100 - integer_percentile) * 2000
-      const integerPercentile = Math.trunc(percentileValue);
-      const calculatedRank = (100 - integerPercentile) * 2000;
+      // Calculate estimated rank based on candidature
+      // Maharashtra: rank = (100 - CET_percentile) * 2000
+      // All India: rank = (100 - JEE_percentile) * 10000
+      let predicted_rank: number | null = null;
+      if (candidature === 'Maharashtra') {
+        predicted_rank = Math.round((100 - percentileValue) * 2000);
+      } else if (candidature === 'All India') {
+        predicted_rank = Math.round((100 - percentileValue) * 10000);
+      }
       
       setPredictions(results);
-      setEstimatedRank(calculatedRank);
+      setEstimatedRank(predicted_rank);
     } catch (err) {
       console.error('Prediction error:', err);
       setError(
@@ -148,6 +188,9 @@ export default function MhtCetPredictorFormPage() {
     'SNDT Women\'s University',
   ];
 
+  // Dynamic percentile label based on candidature
+  const percentileLabel = candidature === 'Maharashtra' ? 'CET Percentile' : 'JEE Percentile';
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       {/* Header */}
@@ -172,6 +215,17 @@ export default function MhtCetPredictorFormPage() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6 sm:py-8 md:py-12">
         <div className="max-w-2xl mx-auto space-y-6">
+          {/* Cutoff Data Status Alert */}
+          {!isCheckingCutoffs && cutoffsCount !== null && cutoffsCount === BigInt(0) && (
+            <Alert className="border-amber-200 bg-amber-50 dark:border-amber-900/50 dark:bg-amber-900/20">
+              <Info className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+              <AlertTitle className="text-amber-800 dark:text-amber-300">No Cutoff Data Available</AlertTitle>
+              <AlertDescription className="text-amber-700 dark:text-amber-400">
+                Please import cutoff data using the CSV upload section below to enable predictions.
+              </AlertDescription>
+            </Alert>
+          )}
+
           {/* CSV Upload Section */}
           <Card className="border-border/50 shadow-lg">
             <CardHeader className="space-y-2 pb-6">
@@ -182,6 +236,11 @@ export default function MhtCetPredictorFormPage() {
               <CardDescription className="text-base">
                 Upload a CSV file containing historical cutoff records to improve predictions
               </CardDescription>
+              {cutoffsCount !== null && cutoffsCount > BigInt(0) && (
+                <p className="text-sm text-muted-foreground pt-2">
+                  <strong>Current cutoff records:</strong> {cutoffsCount.toString()}
+                </p>
+              )}
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -284,10 +343,10 @@ export default function MhtCetPredictorFormPage() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* CET Percentile */}
+                {/* Percentile - Dynamic label based on candidature */}
                 <div className="space-y-2">
                   <Label htmlFor="percentile" className="text-base font-medium">
-                    CET Percentile <span className="text-destructive">*</span>
+                    {candidature ? percentileLabel : 'Percentile'} <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="percentile"
@@ -378,26 +437,34 @@ export default function MhtCetPredictorFormPage() {
                 <div className="flex items-center justify-between rounded-lg border border-border/50 p-4 bg-muted/30">
                   <div className="space-y-0.5">
                     <Label htmlFor="tfws" className="text-base font-medium cursor-pointer">
-                      TFWS (Tuition Fee Waiver Scheme)
+                      Tuition Fee Waiver Scheme (TFWS)
                     </Label>
                     <p className="text-sm text-muted-foreground">
-                      Are you applying under TFWS?
+                      Are you eligible for TFWS?
                     </p>
                   </div>
                   <Switch
                     id="tfws"
                     checked={tfws}
                     onCheckedChange={setTfws}
-                    className="data-[state=checked]:bg-primary"
                     disabled={isLoading}
                   />
                 </div>
+
+                {/* Error Alert */}
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
 
                 {/* Submit Button */}
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full h-12 text-base font-semibold"
+                  className="w-full text-base font-semibold h-12"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -406,75 +473,72 @@ export default function MhtCetPredictorFormPage() {
                       Predicting...
                     </>
                   ) : (
-                    'Predict My Colleges'
+                    'Get Predictions'
                   )}
                 </Button>
               </form>
             </CardContent>
           </Card>
 
-          {/* Error Alert */}
-          {error && (
-            <Alert variant="destructive" className="mt-6">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
           {/* Results Section */}
-          {predictions && predictions.length > 0 && estimatedRank !== null && (
-            <Card className="mt-6 border-border/50 shadow-lg">
-              <CardHeader>
-                <CardTitle className="text-2xl">Your Prediction Results</CardTitle>
+          {predictions !== null && (
+            <Card className="border-border/50 shadow-lg">
+              <CardHeader className="space-y-2 pb-6">
+                <CardTitle className="text-2xl sm:text-3xl">Eligible College Options</CardTitle>
                 <CardDescription className="text-base">
-                  Based on your percentile of {percentile}%, your estimated rank is approximately{' '}
-                  <span className="font-semibold text-foreground">
-                    {estimatedRank.toLocaleString()}
-                  </span>
+                  Based on your predicted rank of <strong>{estimatedRank?.toLocaleString()}</strong>, here are the colleges where you are eligible for admission (predicted rank ≤ closing rank)
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="rounded-lg border border-border/50 overflow-hidden">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="bg-muted/50">
-                        <TableHead className="font-semibold">College Name</TableHead>
-                        <TableHead className="font-semibold">Branch</TableHead>
-                        <TableHead className="font-semibold text-right">Closing Rank</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {predictions.map((prediction, index) => (
-                        <TableRow key={index} className="hover:bg-muted/30">
-                          <TableCell className="font-medium">{prediction.college_name}</TableCell>
-                          <TableCell>{prediction.branch_name}</TableCell>
-                          <TableCell className="text-right font-mono">
-                            {prediction.closing_rank.toLocaleString()}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-                {predictions.length === 0 && (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <p className="text-base">
-                      No colleges found matching your criteria. Try adjusting your filters or upload more cutoff data.
-                    </p>
-                  </div>
+                {predictions.length === 0 ? (
+                  <Alert>
+                    <Info className="h-4 w-4" />
+                    <AlertTitle>No Eligible Colleges Found</AlertTitle>
+                    <AlertDescription>
+                      Based on your predicted rank, no colleges in the current dataset meet the eligibility criteria. This may be due to limited cutoff data or a lower percentile. Try importing more cutoff records or adjusting your inputs.
+                    </AlertDescription>
+                  </Alert>
+                ) : (
+                  <>
+                    <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-900/50 rounded-lg">
+                      <p className="text-sm text-green-800 dark:text-green-300">
+                        <strong>{predictions.length}</strong> eligible college option{predictions.length !== 1 ? 's' : ''} found
+                      </p>
+                    </div>
+                    <div className="rounded-lg border border-border overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <Table>
+                          <TableHeader>
+                            <TableRow className="bg-muted/50">
+                              <TableHead className="font-semibold">College Name</TableHead>
+                              <TableHead className="font-semibold">Branch</TableHead>
+                              <TableHead className="font-semibold text-right">Your Rank</TableHead>
+                              <TableHead className="font-semibold text-right">Closing Rank</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {predictions.map((prediction, index) => (
+                              <TableRow key={index} className="hover:bg-muted/30">
+                                <TableCell className="font-medium">
+                                  {prediction.college_name}
+                                </TableCell>
+                                <TableCell>{prediction.branch_name}</TableCell>
+                                <TableCell className="text-right font-mono">
+                                  {Number(prediction.predicted_rank).toLocaleString()}
+                                </TableCell>
+                                <TableCell className="text-right font-mono">
+                                  {Number(prediction.closing_rank).toLocaleString()}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </div>
+                  </>
                 )}
               </CardContent>
             </Card>
-          )}
-
-          {predictions && predictions.length === 0 && (
-            <Alert className="mt-6">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>No Results Found</AlertTitle>
-              <AlertDescription>
-                No colleges match your current criteria. This could mean your rank is very competitive, or there may not be enough cutoff data available. Try uploading more historical cutoff data using the CSV import feature above.
-              </AlertDescription>
-            </Alert>
           )}
         </div>
       </main>
@@ -482,19 +546,19 @@ export default function MhtCetPredictorFormPage() {
       {/* Footer */}
       <footer className="border-t border-border/40 bg-card/30 mt-12">
         <div className="container mx-auto px-4 py-6">
-          <div className="text-center text-sm text-muted-foreground">
-            <p>
-              © {new Date().getFullYear()} MHT-CET College Predictor v2. Built with ❤️ using{' '}
-              <a
-                href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline font-medium"
-              >
-                caffeine.ai
-              </a>
-            </p>
-          </div>
+          <p className="text-center text-sm text-muted-foreground">
+            © {new Date().getFullYear()} Built with love using{' '}
+            <a
+              href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(
+                typeof window !== 'undefined' ? window.location.hostname : 'mht-cet-predictor'
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline font-medium"
+            >
+              caffeine.ai
+            </a>
+          </p>
         </div>
       </footer>
     </div>

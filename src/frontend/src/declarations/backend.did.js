@@ -15,17 +15,22 @@ export const CutoffsRecord = IDL.Record({
   'seat_type' : IDL.Text,
   'gender' : IDL.Text,
   'category' : IDL.Text,
-  'percentile' : IDL.Text,
 });
 export const Prediction = IDL.Record({
   'college_name' : IDL.Text,
   'branch_name' : IDL.Text,
+  'predicted_rank' : IDL.Nat,
   'closing_rank' : IDL.Nat,
+  'eligible' : IDL.Bool,
 });
 export const ImportResult = IDL.Record({
   'errors' : IDL.Vec(IDL.Tuple(IDL.Nat, IDL.Text)),
   'records_imported' : IDL.Nat,
   'total_rows' : IDL.Nat,
+});
+export const Candidature = IDL.Variant({
+  'allIndia' : IDL.Null,
+  'maharashtra' : IDL.Null,
 });
 
 export const idlService = IDL.Service({
@@ -41,7 +46,11 @@ export const idlService = IDL.Service({
       [],
     ),
   'importCutoffsCsv' : IDL.Func([IDL.Text], [ImportResult], []),
-  'predictAdmission' : IDL.Func([IDL.Text], [IDL.Vec(Prediction)], []),
+  'predictAdmission' : IDL.Func(
+      [IDL.Text, Candidature],
+      [IDL.Vec(Prediction)],
+      [],
+    ),
 });
 
 export const idlInitArgs = [];
@@ -54,17 +63,22 @@ export const idlFactory = ({ IDL }) => {
     'seat_type' : IDL.Text,
     'gender' : IDL.Text,
     'category' : IDL.Text,
-    'percentile' : IDL.Text,
   });
   const Prediction = IDL.Record({
     'college_name' : IDL.Text,
     'branch_name' : IDL.Text,
+    'predicted_rank' : IDL.Nat,
     'closing_rank' : IDL.Nat,
+    'eligible' : IDL.Bool,
   });
   const ImportResult = IDL.Record({
     'errors' : IDL.Vec(IDL.Tuple(IDL.Nat, IDL.Text)),
     'records_imported' : IDL.Nat,
     'total_rows' : IDL.Nat,
+  });
+  const Candidature = IDL.Variant({
+    'allIndia' : IDL.Null,
+    'maharashtra' : IDL.Null,
   });
   
   return IDL.Service({
@@ -80,7 +94,11 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'importCutoffsCsv' : IDL.Func([IDL.Text], [ImportResult], []),
-    'predictAdmission' : IDL.Func([IDL.Text], [IDL.Vec(Prediction)], []),
+    'predictAdmission' : IDL.Func(
+        [IDL.Text, Candidature],
+        [IDL.Vec(Prediction)],
+        [],
+      ),
   });
 };
 

@@ -1,6 +1,6 @@
 {
   "frontend/src/App.tsx": "Main application component that renders the MHT-CET predictor form page as the primary view with minimal wrapper styling.",
-  "frontend/src/pages/MhtCetPredictorFormPage.tsx": "Complete MHT-CET predictor page with CSV upload functionality, prediction form accepting decimal percentile inputs, and updated header displaying \"MHT-CET College Predictor v2\" as the main title.",
+  "frontend/src/pages/MhtCetPredictorFormPage.tsx": "Complete MHT-CET predictor page with CSV upload, prediction form, and results table that displays only eligible colleges (where predicted_rank ≤ closing_rank) as filtered by the backend; includes updated UI copy emphasizing that results show eligible options only, with a count badge and simplified table without eligibility status badges.",
   "frontend/src/index.css": "Global styles with warm earth-tone OKLCH color system (terracotta/rust primary, beige secondary) for both light and dark modes, avoiding blue/purple palette for an education-focused aesthetic.",
   "frontend/tailwind.config.js": "Tailwind configuration with extended color tokens, custom border radius (xl variant added), and Inter font family for a polished, professional look.",
   "frontend/index.html": "HTML entry point with updated document title \"MHT-CET College Predictor v2\" displayed in browser tab."

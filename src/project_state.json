@@ -1,157 +1,18 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 21,
-  "summary": "MHT-CET engineering college predictor web app; CSV upload/import is being refined and predictor logic will rely on closing_rank only (percentile kept as text/not used in calculations).",
+  "projectStateVersion": 3,
+  "summary": "New project",
   "architectural_notes": [
-    "Use SQLite initially for structured storage of cutoff data extracted from CAP PDFs.",
-    "Cutoff records stored with fields: year, round, college_name, branch_name, seat_type, category, gender, closing_rank, percentile.",
-    "Parse combined cutoff codes (e.g., GOPENH) into gender/category/seat_type attributes.",
-    "Prediction compares user estimated rank vs Round 4 closing ranks using thresholds: ≤0.8×cutoff Safe, ≤cutoff Probable, ≤1.2×cutoff Dream.",
-    "Frontend-first milestone: build UI without backend/logic initially.",
-    "Add a minimal predictor function that maps percentile -> estimated rank using a simple placeholder heuristic (until real data/rank model is implemented).",
-    "Expose a lightweight backend endpoint (or server function) that returns dummy results in the format: College | Branch | Chance, to make the form submission functional end-to-end.",
-    "User requested real cutoff data support via a `cutoffs` database table (columns: college_name, branch_name, category, gender, seat_type, closing_rank, percentile); implementation to proceed in smaller steps starting with creating the table only.",
-    "Treat `percentile` as non-numeric text (or ignore it) during CSV import; do not use it in calculations.",
-    "Prediction logic should use only `closing_rank` (not percentile) when classifying Safe/Probable/Dream."
+    "Cutoff record evaluation rule: include college in results if predicted_rank is less than or equal to closing_rank."
   ],
-  "known_issues": [
-    "Percentile input validation needs to allow decimal values; before rank calculation, percentile should be truncated/floored to an integer (e.g., 90.6 → 90) and then use rank = (100 - integer_percentile) * 2000."
-  ],
+  "known_issues": [],
   "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-create-a-mobile-friendly-frontend-page-that-renders-a-simple-mht-cet-college-predictor-form-with-these-fields-and-labels-cet-percentile-number-input-category-dropdown-open-obc-sc-st-ews-gender-dropdown-male-female-candidature-dropdown-maharashtra-all-india-home-university-dropdown-containing-major-maharashtra-universities-tfws-yes-no-and-a-submit-button",
-      "title": "Create a mobile-friendly frontend page that renders a simple MHT-CET college predictor form with these fields and labels: CET Percentile (number input), Category (dropdown: OPEN, OBC, SC, ST, EWS), Gender (dropdown: Male, Female), Candidature (dropdown: Maharashtra, All India), Home University (dropdown containing major Maharashtra universities), TFWS (yes/no), and a Submit button.",
-      "reqIds": [
-        "REQ-1"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-basic-client-side-form-state-wiring-purely-for-ui-purposes-no-predictor-logic-and-no-backend-calls-inputs-should-be-editable-selections-should-persist-in-the-ui-and-submitting-should-prevent-full-page-reload",
-      "title": "Implement basic client-side form state wiring purely for UI purposes (no predictor logic and no backend calls): inputs should be editable, selections should persist in the UI, and submitting should prevent full page reload.",
+      "id": "feature-adjust-the-predictions-ui-to-reflect-that-the-results-list-contains-only-eligible-colleges-predicted-rank-closing-rank-and-ensure-the-table-renders-correctly-with-the-filtered-results-returned-by-the-backend",
+      "title": "Adjust the predictions UI to reflect that the results list contains only eligible colleges (predicted_rank <= closing_rank) and ensure the table renders correctly with the filtered results returned by the backend.",
       "reqIds": [
         "REQ-2"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-apply-a-coherent-visual-theme-across-the-form-colors-typography-spacing-and-components-that-feels-like-an-education-exam-utility-and-is-consistently-used-throughout-the-page-avoid-blue-purple-as-the-primary-palette",
-      "title": "Apply a coherent visual theme across the form (colors, typography, spacing, and components) that feels like an education/exam utility and is consistently used throughout the page; avoid blue/purple as the primary palette.",
-      "reqIds": [
-        "REQ-3"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-wire-the-existing-frontend-src-pages-mhtcetpredictorformpage-tsx-submit-action-to-call-the-backend-predictor-method-using-the-existing-useactor-hook-and-render-the-returned-results-in-the-ui-after-submission",
-      "title": "Wire the existing `frontend/src/pages/MhtCetPredictorFormPage.tsx` submit action to call the backend predictor method using the existing `useActor` hook, and render the returned results in the UI after submission.",
-      "reqIds": [
-        "REQ-5"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-ensure-the-frontend-can-call-the-new-backend-method-by-updating-the-generated-frontend-backend-bindings-types-the-backendinterface-used-by-frontend-src-hooks-useactor-ts-to-include-the-predictor-method-signature-and-response-types",
-      "title": "Ensure the frontend can call the new backend method by updating the generated frontend backend bindings/types (the `backendInterface` used by `frontend/src/hooks/useActor.ts`) to include the predictor method signature and response types.",
-      "reqIds": [
-        "REQ-6"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-a-csv-upload-ui-to-the-existing-predictor-page-frontend-src-pages-mhtcetpredictorformpage-tsx-that-lets-a-user-select-a-csv-file-uploads-it-to-the-backend-import-method-and-displays-the-import-summary-inserted-count-and-any-errors",
-      "title": "Add a CSV upload UI to the existing predictor page (`frontend/src/pages/MhtCetPredictorFormPage.tsx`) that lets a user select a `.csv` file, uploads it to the backend import method, and displays the import summary (inserted count and any errors).",
-      "reqIds": [
-        "REQ-11"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-generated-frontend-backend-bindings-types-the-module-imported-as-backend-and-the-backendinterface-used-by-frontend-src-hooks-useactor-ts-to-include-the-new-csv-import-method-and-any-associated-response-types-so-typescript-compilation-succeeds",
-      "title": "Update the generated frontend backend bindings/types (the module imported as `@/backend` and the `backendInterface` used by `frontend/src/hooks/useActor.ts`) to include the new CSV import method and any associated response types so TypeScript compilation succeeds.",
-      "reqIds": [
-        "REQ-12"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-generated-frontend-backend-bindings-types-the-module-imported-as-backend-and-the-backendinterface-used-by-frontend-src-hooks-useactor-ts-to-reflect-the-updated-backend-types-signatures-resulting-from-treating-percentile-as-text-or-removing-it-so-typescript-compilation-succeeds-and-csv-import-cutoff-inspection-calls-remain-type-correct",
-      "title": "Update the generated frontend backend bindings/types (the module imported as `@/backend` and the `backendInterface` used by `frontend/src/hooks/useActor.ts`) to reflect the updated backend types/signatures resulting from treating `percentile` as text or removing it, so TypeScript compilation succeeds and CSV import + cutoff inspection calls remain type-correct.",
-      "reqIds": [
-        "REQ-16"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-backend-prediction-response-type-used-by-predictadmission-so-each-returned-row-contains-exactly-the-fields-needed-for-the-requested-table-college-name-branch-and-closing-rank-align-field-names-and-types-between-motoko-and-the-generated-frontend-typescript-types-so-the-frontend-can-render-without-type-errors",
-      "title": "Update the backend prediction response type used by `predictAdmission` so each returned row contains exactly the fields needed for the requested table: college name, branch, and closing rank. Align field names and types between Motoko and the generated frontend TypeScript types so the frontend can render without type errors.",
-      "reqIds": [
-        "REQ-18"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-frontend-src-pages-mhtcetpredictorformpage-tsx-so-that-on-successful-prediction-it-displays-results-in-a-table-with-columns-college-name-branch-closing-rank-populated-from-the-backend-response-remove-disable-any-ui-elements-that-assume-a-chance-field-for-prediction-results-e-g-chance-badge-coloring-so-the-rendered-results-match-the-requested-columns",
-      "title": "Update `frontend/src/pages/MhtCetPredictorFormPage.tsx` so that on successful prediction it displays results in a table with columns: College name, Branch, Closing rank, populated from the backend response. Remove/disable any UI elements that assume a `chance` field for prediction results (e.g., chance badge/coloring) so the rendered results match the requested columns.",
-      "reqIds": [
-        "REQ-19"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-make-the-frontend-s-estimated-rank-calculation-consistent-with-the-required-formula-rank-100-percentile-2000-wherever-the-estimated-rank-is-computed-shown-in-frontend-src-pages-mhtcetpredictorformpage-tsx-so-the-displayed-rank-matches-the-logic-used-for-filtering",
-      "title": "Make the frontend’s estimated-rank calculation consistent with the required formula `rank = (100 - percentile) * 2000` wherever the estimated rank is computed/shown in `frontend/src/pages/MhtCetPredictorFormPage.tsx` (so the displayed rank matches the logic used for filtering).",
-      "reqIds": [
-        "REQ-20"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-generated-frontend-backend-bindings-types-the-module-imported-as-backend-so-it-reflects-the-updated-predictadmission-return-type-and-any-renamed-added-removed-fields-without-modifying-immutable-hook-sources-do-not-edit-frontend-src-hooks-useactor-ts",
-      "title": "Update the generated frontend backend bindings/types (the module imported as `@/backend`) so it reflects the updated `predictAdmission` return type and any renamed/added/removed fields, without modifying immutable hook sources (do not edit `frontend/src/hooks/useActor.ts`).",
-      "reqIds": [
-        "REQ-21"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-frontend-src-pages-mhtcetpredictorformpage-tsx-so-the-displayed-estimated-rank-uses-the-same-truncation-rule-as-the-backend-parse-the-percentile-as-a-number-truncate-to-an-integer-e-g-60-56-60-then-compute-rank-100-integer-percentile-2000-keep-allowing-decimal-entry-in-the-percentile-input",
-      "title": "Update `frontend/src/pages/MhtCetPredictorFormPage.tsx` so the displayed estimated rank uses the same truncation rule as the backend: parse the percentile as a number, truncate to an integer (e.g., 60.56 → 60), then compute `rank = (100 - integer_percentile) * 2000`. Keep allowing decimal entry in the percentile input.",
-      "reqIds": [
-        "REQ-23"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-cet-percentile-input-on-frontend-src-pages-mhtcetpredictorformpage-tsx-so-users-can-enter-decimal-percentile-values-e-g-90-6-without-the-ui-rejecting-stripping-or-forcing-integer-only-entry",
-      "title": "Update the CET Percentile input on `frontend/src/pages/MhtCetPredictorFormPage.tsx` so users can enter decimal percentile values (e.g., 90.6) without the UI rejecting, stripping, or forcing integer-only entry.",
-      "reqIds": [
-        "REQ-24"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-cet-percentile-field-in-frontend-src-pages-mhtcetpredictorformpage-tsx-to-use-an-html-numeric-input-that-supports-decimals-by-setting-type-number-step-0-01-min-0-and-max-100",
-      "title": "Update the CET Percentile field in `frontend/src/pages/MhtCetPredictorFormPage.tsx` to use an HTML numeric input that supports decimals by setting `type=\"number\"`, `step={0.01}`, `min={0}`, and `max={100}`.",
-      "reqIds": [
-        "REQ-25"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-browser-document-title-to-exactly-mht-cet-college-predictor-v2-by-changing-the-title-in-frontend-index-html",
-      "title": "Update the browser document title to exactly \"MHT-CET College Predictor v2\" by changing the <title> in `frontend/index.html`.",
-      "reqIds": [
-        "REQ-26"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-visible-app-header-title-text-in-frontend-src-pages-mhtcetpredictorformpage-tsx-to-exactly-mht-cet-college-predictor-v2-currently-rendered-as-mht-cet-college-predictor",
-      "title": "Update the visible app header title text in `frontend/src/pages/MhtCetPredictorFormPage.tsx` to exactly \"MHT-CET College Predictor v2\" (currently rendered as \"MHT-CET College Predictor\").",
-      "reqIds": [
-        "REQ-27"
       ],
       "version": 1
     }
@@ -159,164 +20,20 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Build a simple mobile-friendly frontend form UI for MHT-CET college predictor (percentile, category, gender, candidature, home university, TFWS) with submit button; no backend/logic yet",
+      "summary": "For each cutoff record, include the college in results when predicted_rank <= closing_rank",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Ingest/upload CAP Round 1–4 cutoff PDFs (Maharashtra + All India seats) and extract cutoff tables into structured data",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-3",
-      "summary": "Create SQLite database schema/table for cutoffs (year, round, college, branch, seat_type, category, gender, closing_rank, percentile) including parsing codes like GOPENH",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-4",
-      "summary": "Implement predictor logic: percentile->estimated rank, filter relevant cutoffs, compare to Round 4 closing ranks, classify Safe/Probable/Dream with thresholds",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-5",
-      "summary": "Create results page/table showing college, branch, cutoff percentile, and chance with color coding (Safe green, Probable orange, Dream red)",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-6",
-      "summary": "Prepare the app for deployment as a simple web app",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-7",
-      "summary": "Add simple backend predictor logic for the existing form: convert percentile to estimated rank (placeholder), return dummy/sample college+branch+chance results, and wire it to the UI so submission shows results",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-8",
-      "summary": "Implement a backend predictor method in `backend/main.mo` that accepts the user’s percentile input, converts it to an estimated rank, and returns dummy/sample prediction results with fields `college`, `branch`, and `chance` (values like Dream/Probable/Safe).",
+      "summary": "Update the backend prediction flow so that for each cutoff record, the system includes that record in the returned predictions only when predicted_rank is less than or equal to that record’s closing_rank (i.e., filter out non-eligible records instead of returning all evaluated records).",
       "reqIds": [
-        "REQ-4"
+        "REQ-1"
       ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-9",
-      "summary": "Add a new persistent backend data structure representing a `cutoffs` table with the following columns: `college_name`, `branch_name`, `category`, `gender`, `seat_type`, `closing_rank`, `percentile`. Implement this as a Motoko type plus stable storage in `backend/main.mo` so cutoff records persist across canister upgrades.",
-      "reqIds": [
-        "REQ-7"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-10",
-      "summary": "Expose minimal backend methods to verify and access the stored cutoff data without requiring CSV upload yet: (1) a query method that returns the total count of cutoff records, and (2) a query method that returns a bounded list (e.g., with start/limit parameters) of cutoff records for inspection/testing.",
-      "reqIds": [
-        "REQ-8"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-11",
-      "summary": "Add CSV upload support to import cutoff records into the backend `cutoffs` table (validate/parse rows and persist them)",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-12",
-      "summary": "Implement a backend CSV import method that accepts cutoff records as CSV text, validates/parses each row into `CutoffsRecord`, persists the imported records in the backend cutoffs store, and returns an import summary (e.g., total rows processed, rows inserted, and row-level validation errors).",
-      "reqIds": [
-        "REQ-9"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-13",
-      "summary": "Make the backend cutoffs data persist across canister upgrades so that records imported via CSV remain available after redeploy/upgrade.",
-      "reqIds": [
-        "REQ-10"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-14",
-      "summary": "Update CSV import and predictor logic so percentile is not parsed as float (store as text or ignore) and use only closing_rank for prediction calculations",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-15",
-      "summary": "Update the backend cutoff record model so that the `percentile` column is not parsed as a Float during CSV import (store it as plain text or otherwise exclude it from numeric parsing), and ensure `closing_rank` remains the only numeric field used for prediction calculations.",
-      "reqIds": [
-        "REQ-13"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-16",
-      "summary": "Update the backend CSV parsing/import logic in `backend/main.mo` to parse `closing_rank` from CSV text using a supported numeric parser (e.g., `Nat.fromText`), and remove the current placeholder float parsing/trap path for both `closing_rank` and `percentile`. Also harden parsing to handle common CSV line endings and whitespace (e.g., CRLF).",
-      "reqIds": [
-        "REQ-14"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-17",
-      "summary": "Update backend prediction logic so that any comparisons against historical cutoff data use only `closing_rank` (do not use cutoff `percentile` values in calculations). If prediction logic currently does not use stored cutoffs, ensure that any future-facing or placeholder logic does not reference cutoff percentile numerically and that the code path is consistent with “closing_rank-only” evaluation.",
-      "reqIds": [
-        "REQ-15"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-18",
-      "summary": "Implement actual predictor logic on \"Predict My Colleges\": convert percentile to estimated rank via rank=(100-percentile)*2000, compare against uploaded CSV cutoffs using closing_rank, and display a results table (College name, Branch, Closing rank) including only rows where rank <= closing_rank",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-19",
-      "summary": "Implement actual backend prediction in `backend/main.mo` for `predictAdmission(userPercentile: Text)` by: (1) parsing `userPercentile` as a number in the range 0–100, (2) converting it to an estimated rank using `rank = (100 - percentile) * 2000`, and (3) filtering the imported cutoff records so that a cutoff is included in results when `rank <= closing_rank`. The method must no longer `trap` as a placeholder when valid input is provided.",
-      "reqIds": [
-        "REQ-17"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-20",
-      "summary": "Allow decimal percentile inputs; truncate percentile to an integer (e.g., 60.56 -> 60) before rank calculation and use rank=(100-integer_percentile)*2000",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-21",
-      "summary": "Update backend `predictAdmission(userPercentile: Text)` in `backend/main.mo` to accept decimal percentile strings (e.g., `\"60.56\"`), truncate the parsed percentile to an integer (e.g., 60.56 → 60), and use the updated prediction formula `rank = (100 - integer_percentile) * 2000` for filtering cutoff records.",
-      "reqIds": [
-        "REQ-22"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-22",
-      "summary": "Update CET Percentile input to be type=number with step=0.01, min=0, max=100 to allow decimal percentile entry",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-23",
-      "summary": "Update the app title to \"MHT-CET College Predictor v2\" (UI/document title/branding as applicable)",
-      "reqIds": [],
       "status": "pending"
     }
   ],
-  "projectName": "MHT-CET College Predictor v2",
+  "projectName": "Return only eligible colleges when predicted_rank <= closing_rank",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

@@ -1,15 +1,15 @@
 {
-  "backend/main.mo": "Motoko backend managing cutoff records, CSV import, and percentile-based admission predictions.",
-  "feature_evidence.json": "Feature evidence report linking feature IDs to affected frontend files and components.",
-  "frontend-file-summaries.txt": "Prewritten summaries describing key frontend files and their purposes.",
-  "frontend/index.css": "Tailwind-based global style sheet defining color variables and theme for backgrounds and components.",
-  "frontend/index.html": "HTML entry point setting up root container and loading the main frontend script.",
-  "frontend/src/App.tsx": "Root React component rendering the predictor form page inside a styled container.",
-  "frontend/src/hooks/useActor.ts": "Hook creating and caching a backend canister actor with identity-aware refetch behavior.",
-  "frontend/src/hooks/useInternetIdentity.ts": "Internet Identity auth provider and hook handling login, stored identities, and status flags.",
-  "frontend/src/index.css": "Global Tailwind styles using warm earth-tone OKLCH colors and dark-mode variants.",
-  "frontend/src/main.tsx": "Application entry point initializing React, query client, and Internet Identity provider.",
-  "frontend/src/pages/MhtCetPredictorFormPage.tsx": "Full predictor UI handling percentile input, CSV upload, backend predictions, and displaying results.",
-  "frontend/tailwind.config.js": "Tailwind configuration extending colors, fonts, animations, and container settings, with typography, container-query, and animation plugins enabled.",
-  "project_state.json": "Project state metadata describing the MHT-CET predictor app, its data schema, prediction rules, frontend milestones, and known issues."
+  "backend/main.mo": "Motoko canister that stores cutoff records, imports them from CSV, filters by candidature, computes predicted ranks, and exposes query/mutation methods including prediction and range retrieval.",
+  "feature_evidence.json": "Metadata describing a UI feature update ensuring only eligible prediction results are shown, referencing affected frontend files and components.",
+  "frontend-file-summaries.txt": "Prewritten summaries of major frontend files including app entry, predictor page, styling, and Tailwind config.",
+  "frontend/index.css": "Tailwind base layer defining OKLCH color tokens for light and dark themes with warm earth‑tone palette and global background/text styles.",
+  "frontend/index.html": "HTML root document setting up the app container and loading the main React entry script.",
+  "frontend/src/App.tsx": "Minimal wrapper component that renders the predictor form page inside a full‑height themed container.",
+  "frontend/src/hooks/useActor.ts": "Hook that creates and caches a backend actor tied to Internet Identity, invalidating dependent queries on identity change.",
+  "frontend/src/hooks/useInternetIdentity.ts": "React context and provider implementing Internet Identity login, identity persistence, and status handling.",
+  "frontend/src/index.css": "Tailwind CSS variables and global styles using warm education‑themed colors and font feature settings for both light and dark modes.",
+  "frontend/src/main.tsx": "React entry point mounting the app with React Query and Internet Identity providers.",
+  "frontend/src/pages/MhtCetPredictorFormPage.tsx": "Main predictor UI handling percentile input, candidature selection, CSV cutoff import, backend prediction calls, and rendering the filtered eligible‑college results.",
+  "frontend/tailwind.config.js": "Configures Tailwind with dark mode, content paths, extended theme settings for fonts, colors, radii, shadows, animations, and includes typography, container queries, and animation plugins.",
+  "project_state.json": "Defines the project’s state, feature set, and pending requests related to filtering cutoff records based on predicted_rank <= closing_rank."
 }

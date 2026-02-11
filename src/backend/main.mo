@@ -1,11 +1,12 @@
 import List "mo:core/List";
-import Text "mo:core/Text";
-import Array "mo:core/Array";
 import Nat "mo:core/Nat";
+import Array "mo:core/Array";
+import Text "mo:core/Text";
 import Runtime "mo:core/Runtime";
+import Iter "mo:core/Iter";
+import Int "mo:core/Int";
 import Char "mo:core/Char";
-
-
+import Float "mo:core/Float";
 
 actor {
   public type CutoffsRecord = {
@@ -15,13 +16,14 @@ actor {
     category : Text;
     gender : Text;
     seat_type : Text;
-    percentile : Text;
   };
 
   public type Prediction = {
     college_name : Text;
     branch_name : Text;
     closing_rank : Nat;
+    predicted_rank : Nat;
+    eligible : Bool;
   };
 
   type ImportResult = {
@@ -30,7 +32,12 @@ actor {
     total_rows : Nat;
   };
 
-  var cutoffs = List.empty<CutoffsRecord>();
+  type Candidature = {
+    #maharashtra;
+    #allIndia;
+  };
+
+  let cutoffs = List.empty<CutoffsRecord>();
 
   public query ({ caller }) func getCutoffsCount() : async Nat {
     cutoffs.size();
@@ -65,7 +72,6 @@ actor {
           category = fields[3].trim(#char ' ');
           gender = fields[4].trim(#char ' ');
           seat_type = fields[5].trim(#char ' ');
-          percentile = fields[6].trim(#char ' ');
         });
       };
       case (null) {
@@ -112,7 +118,31 @@ actor {
     };
   };
 
-  public shared ({ caller }) func predictAdmission(userPercentile : Text) : async [Prediction] {
+  func getRecordsByCandidature(candidature : Candidature) : Iter.Iter<CutoffsRecord> {
+    switch (candidature) {
+      case (#maharashtra) {
+        cutoffs.values().filter(func(record) { record.seat_type.startsWith(#text "MS") });
+      };
+      case (#allIndia) {
+        cutoffs.values().filter(func(record) { record.seat_type.startsWith(#text "AI") });
+      };
+    };
+  };
+
+  func computeRank(candidature : Candidature, percentile : Nat) : Nat {
+    let normalizedPercentile = if (percentile > 100) { 100 } else { percentile };
+
+    switch (candidature) {
+      case (#maharashtra) {
+        (Int.abs(100 - normalizedPercentile) * 2000).toNat();
+      };
+      case (#allIndia) {
+        (Int.abs(100 - normalizedPercentile) * 10000).toNat();
+      };
+    };
+  };
+
+  public shared ({ caller }) func predictAdmission(userPercentile : Text, candidature : Candidature) : async [Prediction] {
     let trimmed = userPercentile.trim(#char ' ');
 
     switch (Nat.fromText(trimmed)) {
@@ -121,23 +151,21 @@ actor {
           Runtime.trap("Percentile must be in range 0-100. Provided value: " # percentile.toText());
         };
 
-        let rank = (100 - percentile) * 2000;
+        let predicted_rank = computeRank(candidature, percentile);
 
-        let filtered = cutoffs.filter(
-          func(record) {
-            rank <= record.closing_rank;
-          }
-        );
-
-        filtered.toArray().map(
-          func(record) {
+        getRecordsByCandidature(candidature)
+        .filter(func(rec) { predicted_rank <= rec.closing_rank })
+        .map(
+          func(rec) {
             {
-              college_name = record.college_name;
-              branch_name = record.branch_name;
-              closing_rank = record.closing_rank;
+              college_name = rec.college_name;
+              branch_name = rec.branch_name;
+              closing_rank = rec.closing_rank;
+              predicted_rank;
+              eligible = true;
             };
           }
-        );
+        ).toArray();
       };
       case (null) {
         Runtime.trap("Invalid percentile value: " # userPercentile);

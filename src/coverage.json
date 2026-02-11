@@ -1,29 +1,25 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-10T13:36:16.461Z",
+  "generatedAt": "2026-02-11T05:46:21.910Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
     "total": 2,
-    "implemented": 2,
+    "implemented": 1,
     "items": [
       {
-        "id": "REQ-26",
-        "summary": "Update the browser document title to exactly \"MHT-CET College Predictor v2\" by changing the <title> in `frontend/index.html`.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/index.html"
-        ],
-        "matchedFiles": [
-          "frontend/index.html"
-        ]
+        "id": "REQ-1",
+        "summary": "Update the backend prediction flow so that for each cutoff record, the system includes that record in the returned predictions only when predicted_rank is less than or equal to that record’s closing_rank (i.e., filter out non-eligible records instead of returning all evaluated records).",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       },
       {
-        "id": "REQ-27",
-        "summary": "Update the visible app header title text in `frontend/src/pages/MhtCetPredictorFormPage.tsx` to exactly \"MHT-CET College Predictor v2\" (currently rendered as \"MHT-CET College Predictor\").",
+        "id": "REQ-2",
+        "summary": "Adjust the predictions UI to reflect that the results list contains only eligible colleges (predicted_rank <= closing_rank) and ensure the table renders correctly with the filtered results returned by the backend.",
         "status": "implemented",
         "plannedFiles": [
           "frontend/src/pages/MhtCetPredictorFormPage.tsx"
@@ -35,11 +31,11 @@
     ]
   },
   "changedFiles": [
+    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/index.html",
     "frontend/src/pages/MhtCetPredictorFormPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",

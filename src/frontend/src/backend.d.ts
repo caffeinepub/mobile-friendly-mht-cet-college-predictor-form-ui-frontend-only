@@ -19,17 +19,22 @@ export interface CutoffsRecord {
     seat_type: string;
     gender: string;
     category: string;
-    percentile: string;
 }
 export interface Prediction {
     college_name: string;
     branch_name: string;
+    predicted_rank: bigint;
     closing_rank: bigint;
+    eligible: boolean;
+}
+export enum Candidature {
+    allIndia = "allIndia",
+    maharashtra = "maharashtra"
 }
 export interface backendInterface {
     getCutoffsCount(): Promise<bigint>;
     getCutoffsRange(start: bigint, limit: bigint): Promise<Array<CutoffsRecord>>;
     getPredictions(college: string, branch: string, category: string, gender: string, seat_type: string): Promise<Array<Prediction>>;
     importCutoffsCsv(csvText: string): Promise<ImportResult>;
-    predictAdmission(userPercentile: string): Promise<Array<Prediction>>;
+    predictAdmission(userPercentile: string, candidature: Candidature): Promise<Array<Prediction>>;
 }

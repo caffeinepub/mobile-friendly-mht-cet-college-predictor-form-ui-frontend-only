@@ -10,6 +10,8 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export type Candidature = { 'allIndia' : null } |
+  { 'maharashtra' : null };
 export interface CutoffsRecord {
   'college_name' : string,
   'branch_name' : string,
@@ -17,7 +19,6 @@ export interface CutoffsRecord {
   'seat_type' : string,
   'gender' : string,
   'category' : string,
-  'percentile' : string,
 }
 export interface ImportResult {
   'errors' : Array<[bigint, string]>,
@@ -27,7 +28,9 @@ export interface ImportResult {
 export interface Prediction {
   'college_name' : string,
   'branch_name' : string,
+  'predicted_rank' : bigint,
   'closing_rank' : bigint,
+  'eligible' : boolean,
 }
 export interface _SERVICE {
   'getCutoffsCount' : ActorMethod<[], bigint>,
@@ -37,7 +40,7 @@ export interface _SERVICE {
     Array<Prediction>
   >,
   'importCutoffsCsv' : ActorMethod<[string], ImportResult>,
-  'predictAdmission' : ActorMethod<[string], Array<Prediction>>,
+  'predictAdmission' : ActorMethod<[string, Candidature], Array<Prediction>>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];
