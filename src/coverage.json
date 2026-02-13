@@ -1,42 +1,48 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-11T05:46:21.910Z",
+  "generatedAt": "2026-02-13T19:39:45.629Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
     "total": 2,
-    "implemented": 1,
+    "implemented": 2,
     "items": [
       {
-        "id": "REQ-1",
-        "summary": "Update the backend prediction flow so that for each cutoff record, the system includes that record in the returned predictions only when predicted_rank is less than or equal to that record’s closing_rank (i.e., filter out non-eligible records instead of returning all evaluated records).",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-2",
-        "summary": "Adjust the predictions UI to reflect that the results list contains only eligible colleges (predicted_rank <= closing_rank) and ensure the table renders correctly with the filtered results returned by the backend.",
+        "id": "REQ-6",
+        "summary": "Add the uploaded image (photo_2026-02-13_15-36-18-1.jpg) as a top-of-home-page banner in the Home page hero section, displayed above the main heading and centered, responsive, and not distorted.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/MhtCetPredictorFormPage.tsx"
+          "frontend/public/assets/photo_2026-02-13_15-36-18-1.jpg",
+          "frontend/src/pages/HomePage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/MhtCetPredictorFormPage.tsx"
+          "frontend/src/pages/HomePage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-7",
+        "summary": "Update the global UI color theme to navy blue with faint/light blue accents across the site (backgrounds, buttons, links, icons, cards, borders) by adjusting the existing CSS theme tokens/variables so all Shadcn/Tailwind components inherit the new palette consistently in light and dark modes.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/index.css",
+          "frontend/index.css"
+        ],
+        "matchedFiles": [
+          "frontend/src/index.css"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/pages/MhtCetPredictorFormPage.tsx",
+    "frontend/src/index.css",
+    "frontend/src/pages/HomePage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

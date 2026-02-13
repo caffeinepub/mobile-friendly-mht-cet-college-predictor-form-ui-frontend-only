@@ -1,20 +1,49 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Predictions UI: show only eligible colleges returned by backend",
+  "title": "Home hero banner + navy/light-blue global theme",
   "requirements": [
     {
-      "id": "REQ-2",
-      "summary": "Update the predictions results UI copy and table rendering to assume the backend returns only eligible colleges (predicted_rank <= closing_rank) and present the filtered list correctly.",
+      "id": "REQ-6",
+      "summary": "Add the uploaded banner image to the top of the Home page hero section with responsive, non-distorted rendering and English alt text.",
       "acceptanceCriteria": [
-        "After running predictions, the table only displays colleges that meet predicted_rank <= closing_rank (as returned by the backend).",
-        "Any user-facing text describing results is in English and does not imply that non-eligible records are shown."
+        "The image file is added to the frontend as a static asset (do not serve it from the backend).",
+        "Home page renders the banner at the very top of the hero section (before the H2 heading).",
+        "Banner is responsive (scales down on mobile) and maintains aspect ratio (no stretching).",
+        "Image includes appropriate English alt text (e.g., \"Concept Delta banner\")."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/MhtCetPredictorFormPage.tsx",
+          "path": "frontend/public/assets/photo_2026-02-13_15-36-18-1.jpg",
+          "operation": "create",
+          "description": "Add the uploaded banner image as a static frontend asset (copy from the provided upload) so it can be referenced directly by the Home page without involving the backend."
+        },
+        {
+          "path": "frontend/src/pages/HomePage.tsx",
           "operation": "modify",
-          "description": "Adjust the Results Section to reflect that returned predictions are already eligibility-filtered by the backend (predicted_rank <= closing_rank): update any headings/descriptions and empty-state messages to explicitly say the list contains eligible options only; ensure the table renders correctly when only eligible rows are present (including consistent rendering of predicted_rank/closing_rank and any existing eligibility indicator fields). If the UI currently implies it shows all evaluated colleges, revise the English copy accordingly. Use existing shadcn-ui components already present in this file (e.g., Table, Alert, Badge, Card) to present the updated messaging and results styling; verify the component's usage instructions before implementing."
+          "description": "Update the hero section to render the new banner image above the main H2 heading, centered, responsive, and preserving aspect ratio (e.g., using sizing + object-fit containment to avoid distortion) with English alt text like \"Concept Delta banner\"."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Switch the global theme tokens to a navy primary with faint/light blue accents so Tailwind/Shadcn styling updates site-wide in light and dark modes without editing shadcn UI component files.",
+      "acceptanceCriteria": [
+        "The primary color is navy blue and secondary/accent colors are faint/light blue (no earth-tone/terracotta palette remains).",
+        "Buttons, links, and icon highlights use the updated primary/secondary tokens (e.g., components using text-primary/bg-primary reflect the new navy).",
+        "Light mode and dark mode both remain readable with sufficient contrast (foreground text is legible on background and primary surfaces).",
+        "No changes are made to files under frontend/src/components/ui (compose/override via tokens and Tailwind usage only)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Replace the existing earth-tone CSS variables with a navy-blue primary and faint/light-blue secondary/accent palette for both :root and .dark so Tailwind/Shadcn tokens (primary/secondary/accent/muted/border/ring/etc.) inherit the new colors consistently. Use the shadcn-ui token approach (CSS variables consumed by Tailwind colors). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/index.css",
+          "operation": "modify",
+          "description": "Align any parallel/global CSS theme tokens with the same navy + faint/light blue palette in both light and dark modes to ensure consistent styling regardless of which global stylesheet is imported by the app. Use the shadcn-ui token approach (CSS variables consumed by Tailwind colors). Verify the component's usage instructions before implementing."
         }
       ]
     }

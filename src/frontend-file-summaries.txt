@@ -1,7 +1,19 @@
 {
-  "frontend/src/App.tsx": "Main application component that renders the MHT-CET predictor form page as the primary view with minimal wrapper styling.",
-  "frontend/src/pages/MhtCetPredictorFormPage.tsx": "Complete MHT-CET predictor page with CSV upload, prediction form, and results table that displays only eligible colleges (where predicted_rank ≤ closing_rank) as filtered by the backend; includes updated UI copy emphasizing that results show eligible options only, with a count badge and simplified table without eligibility status badges.",
-  "frontend/src/index.css": "Global styles with warm earth-tone OKLCH color system (terracotta/rust primary, beige secondary) for both light and dark modes, avoiding blue/purple palette for an education-focused aesthetic.",
+  "frontend/src/App.tsx": "Main application component with simple hash-free page routing between Home, Predictor, How it Works, and Contact/Support, wrapped in ErrorBoundary and SiteLayout.",
+  "frontend/src/pages/MhtCetPredictorFormPage.tsx": "Complete MHT-CET predictor form with fixed Select crash (no empty-string values, optional selects use undefined), CSV upload section framed as optional, disabled prediction submission when cutoff data is missing, and graceful no-data UX.",
+  "frontend/src/index.css": "Global styles with navy blue primary and faint/light blue accent OKLCH color system for both light and dark modes, maintaining professional education-focused aesthetic with cool blue tones.",
   "frontend/tailwind.config.js": "Tailwind configuration with extended color tokens, custom border radius (xl variant added), and Inter font family for a polished, professional look.",
-  "frontend/index.html": "HTML entry point with updated document title \"MHT-CET College Predictor v2\" displayed in browser tab."
+  "frontend/index.html": "HTML entry point with updated document title \"MHT-CET College Predictor v2\" displayed in browser tab.",
+  "frontend/src/components/lead-capture/LeadCaptureForm.tsx": "Lead capture modal component with mandatory Telegram confirmation checkbox validation, non-dismissible dialog behavior (no outside click or escape key), and form fields for name, mobile, WhatsApp (all required), and optional email.",
+  "frontend/src/utils/validation/whatsapp.ts": "WhatsApp number validation utility that normalizes and validates 10-digit Indian mobile numbers with appropriate error messages.",
+  "frontend/src/utils/predictorDefaults.ts": "Internal default values containing only the candidature default (Maharashtra) used for rank calculation; gender and branch defaults removed since these are now optional and only sent when provided by the user.",
+  "frontend/src/components/admin/AdminLeadExportCard.tsx": "Admin-only component that checks user authorization status and provides CSV export functionality for all stored leads with copy-to-clipboard and download options, displaying clear error messages for unauthorized access.",
+  "frontend/src/backend.d.ts": "TypeScript interface definitions for the backend canister, including types for Lead, CutoffsRecord, Prediction, PredictStep1 (with optional gender/branchName), ImportResult, UserProfile, Candidature enum, and the complete backendInterface with all available methods.",
+  "frontend/src/components/ErrorBoundary.tsx": "React error boundary component that catches render errors and displays a user-friendly fallback UI with error details, reload button, and support guidance.",
+  "frontend/public/assets/generated/banner-mhtcet.dim_1600x400.jpg": "Generated banner image asset for the MHT-CET College Predictor header (1600x400px JPEG).",
+  "frontend/src/components/layout/SiteLayout.tsx": "Shared site layout providing consistent header with navigation, logo/branding, main content area, and footer with caffeine.ai attribution across all pages.",
+  "frontend/src/pages/HomePage.tsx": "Home page with Concept Delta banner image at the top, followed by education-focused value proposition, feature highlights (accurate guidance, transparency, privacy), and clear call-to-action leading to the Predictor.",
+  "frontend/src/pages/PredictorPage.tsx": "Predictor page wrapper with intro section, data upload guidance alert, and embedded MhtCetPredictorFormPage component.",
+  "frontend/src/pages/HowItWorksPage.tsx": "Informational page explaining the four-step prediction process (input details, rank calculation, cutoff matching, results) with clear sections and important notes about data requirements.",
+  "frontend/src/pages/ContactSupportPage.tsx": "Contact and support page with support guidelines, contact information placeholder, common issues FAQ, and additional resources section."
 }

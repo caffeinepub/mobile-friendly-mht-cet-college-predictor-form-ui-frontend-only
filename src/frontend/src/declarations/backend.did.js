@@ -8,6 +8,19 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const UserRole = IDL.Variant({
+  'admin' : IDL.Null,
+  'user' : IDL.Null,
+  'guest' : IDL.Null,
+});
+export const Lead = IDL.Record({
+  'name' : IDL.Text,
+  'whatsapp' : IDL.Text,
+  'email' : IDL.Opt(IDL.Text),
+  'mobile' : IDL.Text,
+  'telegram' : IDL.Bool,
+});
+export const UserProfile = IDL.Record({ 'name' : IDL.Text });
 export const CutoffsRecord = IDL.Record({
   'college_name' : IDL.Text,
   'branch_name' : IDL.Text,
@@ -16,46 +29,81 @@ export const CutoffsRecord = IDL.Record({
   'gender' : IDL.Text,
   'category' : IDL.Text,
 });
+export const ImportResult = IDL.Record({
+  'errors' : IDL.Vec(IDL.Tuple(IDL.Nat, IDL.Text)),
+  'records_imported' : IDL.Nat,
+  'total_rows' : IDL.Nat,
+});
+export const PredictStep1 = IDL.Record({
+  'gender' : IDL.Opt(IDL.Text),
+  'category' : IDL.Text,
+  'branchName' : IDL.Opt(IDL.Text),
+  'college' : IDL.Opt(IDL.Text),
+});
+export const Candidature = IDL.Variant({
+  'allIndia' : IDL.Null,
+  'maharashtra' : IDL.Null,
+});
 export const Prediction = IDL.Record({
   'college_name' : IDL.Text,
   'branch_name' : IDL.Text,
   'predicted_rank' : IDL.Nat,
   'closing_rank' : IDL.Nat,
   'eligible' : IDL.Bool,
-});
-export const ImportResult = IDL.Record({
-  'errors' : IDL.Vec(IDL.Tuple(IDL.Nat, IDL.Text)),
-  'records_imported' : IDL.Nat,
-  'total_rows' : IDL.Nat,
-});
-export const Candidature = IDL.Variant({
-  'allIndia' : IDL.Null,
-  'maharashtra' : IDL.Null,
+  'predicted_percentile' : IDL.Float64,
 });
 
 export const idlService = IDL.Service({
+  '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'addLead' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Bool, IDL.Opt(IDL.Text)],
+      [IDL.Nat],
+      [],
+    ),
+  'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'exportLeadsAsCsv' : IDL.Func([], [IDL.Text], ['query']),
+  'getAllLeads' : IDL.Func([], [IDL.Vec(IDL.Tuple(IDL.Nat, Lead))], ['query']),
+  'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+  'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getCutoffsCount' : IDL.Func([], [IDL.Nat], ['query']),
   'getCutoffsRange' : IDL.Func(
       [IDL.Nat, IDL.Nat],
       [IDL.Vec(CutoffsRecord)],
       ['query'],
     ),
-  'getPredictions' : IDL.Func(
-      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
-      [IDL.Vec(Prediction)],
-      [],
+  'getLead' : IDL.Func([IDL.Nat], [IDL.Opt(Lead)], ['query']),
+  'getMaxClosingRank' : IDL.Func([], [IDL.Opt(IDL.Nat)], ['query']),
+  'getUserProfile' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Opt(UserProfile)],
+      ['query'],
     ),
   'importCutoffsCsv' : IDL.Func([IDL.Text], [ImportResult], []),
-  'predictAdmission' : IDL.Func(
-      [IDL.Text, Candidature],
+  'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'predictAdmissionStep1' : IDL.Func(
+      [IDL.Text, PredictStep1, Candidature],
       [IDL.Vec(Prediction)],
       [],
     ),
+  'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const UserRole = IDL.Variant({
+    'admin' : IDL.Null,
+    'user' : IDL.Null,
+    'guest' : IDL.Null,
+  });
+  const Lead = IDL.Record({
+    'name' : IDL.Text,
+    'whatsapp' : IDL.Text,
+    'email' : IDL.Opt(IDL.Text),
+    'mobile' : IDL.Text,
+    'telegram' : IDL.Bool,
+  });
+  const UserProfile = IDL.Record({ 'name' : IDL.Text });
   const CutoffsRecord = IDL.Record({
     'college_name' : IDL.Text,
     'branch_name' : IDL.Text,
@@ -64,41 +112,67 @@ export const idlFactory = ({ IDL }) => {
     'gender' : IDL.Text,
     'category' : IDL.Text,
   });
+  const ImportResult = IDL.Record({
+    'errors' : IDL.Vec(IDL.Tuple(IDL.Nat, IDL.Text)),
+    'records_imported' : IDL.Nat,
+    'total_rows' : IDL.Nat,
+  });
+  const PredictStep1 = IDL.Record({
+    'gender' : IDL.Opt(IDL.Text),
+    'category' : IDL.Text,
+    'branchName' : IDL.Opt(IDL.Text),
+    'college' : IDL.Opt(IDL.Text),
+  });
+  const Candidature = IDL.Variant({
+    'allIndia' : IDL.Null,
+    'maharashtra' : IDL.Null,
+  });
   const Prediction = IDL.Record({
     'college_name' : IDL.Text,
     'branch_name' : IDL.Text,
     'predicted_rank' : IDL.Nat,
     'closing_rank' : IDL.Nat,
     'eligible' : IDL.Bool,
-  });
-  const ImportResult = IDL.Record({
-    'errors' : IDL.Vec(IDL.Tuple(IDL.Nat, IDL.Text)),
-    'records_imported' : IDL.Nat,
-    'total_rows' : IDL.Nat,
-  });
-  const Candidature = IDL.Variant({
-    'allIndia' : IDL.Null,
-    'maharashtra' : IDL.Null,
+    'predicted_percentile' : IDL.Float64,
   });
   
   return IDL.Service({
+    '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'addLead' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Bool, IDL.Opt(IDL.Text)],
+        [IDL.Nat],
+        [],
+      ),
+    'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'exportLeadsAsCsv' : IDL.Func([], [IDL.Text], ['query']),
+    'getAllLeads' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Tuple(IDL.Nat, Lead))],
+        ['query'],
+      ),
+    'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getCutoffsCount' : IDL.Func([], [IDL.Nat], ['query']),
     'getCutoffsRange' : IDL.Func(
         [IDL.Nat, IDL.Nat],
         [IDL.Vec(CutoffsRecord)],
         ['query'],
       ),
-    'getPredictions' : IDL.Func(
-        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
-        [IDL.Vec(Prediction)],
-        [],
+    'getLead' : IDL.Func([IDL.Nat], [IDL.Opt(Lead)], ['query']),
+    'getMaxClosingRank' : IDL.Func([], [IDL.Opt(IDL.Nat)], ['query']),
+    'getUserProfile' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Opt(UserProfile)],
+        ['query'],
       ),
     'importCutoffsCsv' : IDL.Func([IDL.Text], [ImportResult], []),
-    'predictAdmission' : IDL.Func(
-        [IDL.Text, Candidature],
+    'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'predictAdmissionStep1' : IDL.Func(
+        [IDL.Text, PredictStep1, Candidature],
         [IDL.Vec(Prediction)],
         [],
       ),
+    'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   });
 };
 

@@ -1,18 +1,24 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "New project",
-  "architectural_notes": [
-    "Cutoff record evaluation rule: include college in results if predicted_rank is less than or equal to closing_rank."
-  ],
+  "summary": "Website project: update home page top section content and apply a navy blue / faint blue color theme.",
+  "architectural_notes": [],
   "known_issues": [],
   "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-adjust-the-predictions-ui-to-reflect-that-the-results-list-contains-only-eligible-colleges-predicted-rank-closing-rank-and-ensure-the-table-renders-correctly-with-the-filtered-results-returned-by-the-backend",
-      "title": "Adjust the predictions UI to reflect that the results list contains only eligible colleges (predicted_rank <= closing_rank) and ensure the table renders correctly with the filtered results returned by the backend.",
+      "id": "feature-add-the-uploaded-image-photo-2026-02-13-15-36-18-1-jpg-as-a-top-of-home-page-banner-in-the-home-page-hero-section-displayed-above-the-main-heading-and-centered-responsive-and-not-distorted",
+      "title": "Add the uploaded image (photo_2026-02-13_15-36-18-1.jpg) as a top-of-home-page banner in the Home page hero section, displayed above the main heading and centered, responsive, and not distorted.",
       "reqIds": [
-        "REQ-2"
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-global-ui-color-theme-to-navy-blue-with-faint-light-blue-accents-across-the-site-backgrounds-buttons-links-icons-cards-borders-by-adjusting-the-existing-css-theme-tokens-variables-so-all-shadcn-tailwind-components-inherit-the-new-palette-consistently-in-light-and-dark-modes",
+      "title": "Update the global UI color theme to navy blue with faint/light blue accents across the site (backgrounds, buttons, links, icons, cards, borders) by adjusting the existing CSS theme tokens/variables so all Shadcn/Tailwind components inherit the new palette consistently in light and dark modes.",
+      "reqIds": [
+        "REQ-7"
       ],
       "version": 1
     }
@@ -20,20 +26,18 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "For each cutoff record, include the college in results when predicted_rank <= closing_rank",
+      "summary": "Update the top of the home page with the provided content.",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Update the backend prediction flow so that for each cutoff record, the system includes that record in the returned predictions only when predicted_rank is less than or equal to that record’s closing_rank (i.e., filter out non-eligible records instead of returning all evaluated records).",
-      "reqIds": [
-        "REQ-1"
-      ],
+      "summary": "Set the website color theme to navy blue with faint/light blue accents.",
+      "reqIds": [],
       "status": "pending"
     }
   ],
-  "projectName": "Return only eligible colleges when predicted_rank <= closing_rank",
+  "projectName": "Add uploaded banner to Home page hero and switch site theme to navy/faint blue",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

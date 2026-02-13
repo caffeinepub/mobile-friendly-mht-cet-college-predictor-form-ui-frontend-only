@@ -1,10 +1,10 @@
 # Specification
 
 ## Summary
-**Goal:** Return and display only eligible college predictions where the predicted rank is less than or equal to each cutoff record’s closing rank.
+**Goal:** Add the uploaded banner image to the Home page hero and update the site’s global theme to a navy blue palette with faint/light blue accents.
 
 **Planned changes:**
-- Update the backend prediction response to filter out cutoff records where `predicted_rank > closing_rank`, returning only eligible records per cutoff record comparison.
-- Update the predictions UI copy/behavior to reflect that only eligible colleges are shown and ensure the results table renders correctly with the backend-filtered list.
+- Add `photo_2026-02-13_15-36-18-1.jpg` as a static frontend asset and render it at the very top of the Home page hero section (above the main heading), centered, responsive, and preserving aspect ratio (no distortion), with English alt text.
+- Update the global CSS theme tokens/variables so the primary color becomes navy blue and accents become faint/light blue across backgrounds, buttons, links, icons, cards, and borders; ensure both light and dark modes remain readable and consistent without editing `frontend/src/components/ui/*`.
 
-**User-visible outcome:** After running predictions, users see a results table containing only colleges they are eligible for (where `predicted_rank <= closing_rank`), with English-only user-facing text that does not imply non-eligible records are included.
+**User-visible outcome:** The Home page displays a centered, responsive banner above the hero heading, and the entire site adopts a navy + faint/light blue color theme in both light and dark modes.

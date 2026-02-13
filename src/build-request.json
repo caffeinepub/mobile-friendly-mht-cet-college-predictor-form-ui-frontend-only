@@ -1,66 +1,58 @@
 {
   "kind": "build_request",
-  "title": "Return only eligible colleges when predicted_rank <= closing_rank",
+  "title": "Add uploaded banner to Home page hero and switch site theme to navy/faint blue",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-1",
-      "text": "Update the backend prediction flow so that for each cutoff record, the system includes that record in the returned predictions only when predicted_rank is less than or equal to that record’s closing_rank (i.e., filter out non-eligible records instead of returning all evaluated records).",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "For each cutoff record, check if predicted_rank is less than or equal to closing_rank.\nIf yes, include that college in the results."
-        ]
-      },
-      "acceptanceCriteria": [
-        "Given imported cutoff data for a candidature, predictAdmission returns only predictions where predicted_rank <= closing_rank.",
-        "No predictions with predicted_rank > closing_rank are present in the predictAdmission response.",
-        "Eligible comparisons are performed per cutoff record (not globally), using that record’s closing_rank."
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "text": "Adjust the predictions UI to reflect that the results list contains only eligible colleges (predicted_rank <= closing_rank) and ensure the table renders correctly with the filtered results returned by the backend.",
+      "id": "REQ-6",
+      "text": "Add the uploaded image (photo_2026-02-13_15-36-18-1.jpg) as a top-of-home-page banner in the Home page hero section, displayed above the main heading and centered, responsive, and not distorted.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-4"
         ],
         "quotes": [
-          "If yes, include that college in the results."
+          "use this at top of home page and colur thim of our website is neavy bilue fain blue"
         ]
       },
       "acceptanceCriteria": [
-        "After running predictions, the table only displays colleges that meet predicted_rank <= closing_rank (as returned by the backend).",
-        "Any user-facing text describing results is in English and does not imply that non-eligible records are shown."
+        "The image file is added to the frontend as a static asset (do not serve it from the backend).",
+        "Home page renders the banner at the very top of the hero section (before the H2 heading).",
+        "Banner is responsive (scales down on mobile) and maintains aspect ratio (no stretching).",
+        "Image includes appropriate English alt text (e.g., \"Concept Delta banner\")."
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Update the global UI color theme to navy blue with faint/light blue accents across the site (backgrounds, buttons, links, icons, cards, borders) by adjusting the existing CSS theme tokens/variables so all Shadcn/Tailwind components inherit the new palette consistently in light and dark modes.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "colur thim of our website is neavy bilue fain blue"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The primary color is navy blue and secondary/accent colors are faint/light blue (no earth-tone/terracotta palette remains).",
+        "Buttons, links, and icon highlights use the updated primary/secondary tokens (e.g., components using text-primary/bg-primary reflect the new navy).",
+        "Light mode and dark mode both remain readable with sufficient contrast (foreground text is legible on background and primary surfaces).",
+        "No changes are made to files under frontend/src/components/ui (compose/override via tokens and Tailwind usage only)."
       ]
     }
   ],
   "constraints": [
-    "Backend must remain a single Motoko actor in backend/main.mo (no additional backend services).",
-    "Do not edit frontend files under frontend/src/components/ui or other immutable paths listed in SYSTEM_CONTEXT.",
+    "Frontend immutable paths must not be edited: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui/*.",
+    "Backend must remain single-actor; do not introduce additional canisters/services.",
     "Use English for any user-facing text."
   ],
   "nonGoals": [
-    "Changing the rank computation formula (computeRank) or percentile validation rules.",
-    "Adding new authentication methods beyond Internet Identity.",
-    "Adding external databases or third-party services."
+    "Changing predictor logic, CSV import behavior, or backend data models.",
+    "Adding new pages or navigation items beyond styling and the Home page top banner."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

@@ -1,61 +1,25 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-11T05:46:21.908Z",
-  "summary": "The diff clearly adds/mentions UI and styling changes beyond the requested eligibility filtering. Due to truncation of `predictAdmission` and limited visibility into the results table rendering, implementation of the core backend filtering (REQ-1) and the frontend rendering/copy alignment (REQ-2) cannot be confirmed from the provided diff evidence.",
+  "generatedAt": "2026-02-13T19:39:45.625Z",
+  "summary": "REQ-7 (navy/faint blue theme tokens) appears implemented via CSS variable updates in frontend/src/index.css. REQ-6 banner rendering is added to the Home page hero area, but the required uploaded image file itself is not added as a frontend static asset in this diff, so REQ-6 is not fully satisfied.",
   "missing_requirements": [
     {
-      "id": "REQ-1",
-      "requirement": "Update the backend prediction flow so that for each cutoff record, the system includes that record in the returned predictions only when predicted_rank is less than or equal to that record’s closing_rank (filter out non-eligible records).",
-      "reason": "The `predictAdmission` function is truncated in the diff, and there is no visible evidence of a per-record filter (`predicted_rank <= closing_rank`) being applied before returning predictions. The presence of an `eligible : Bool` field in `Prediction` could indicate non-eligible records are still returned with a flag, which would not satisfy the requirement, but the actual return behavior is not shown.",
+      "id": "REQ-6",
+      "requirement": "Add the uploaded image file (photo_2026-02-13_15-36-18-1.jpg) to the frontend as a static asset (not served from backend).",
+      "reason": "The Home page references /assets/photo_2026-02-13_15-36-18-1.jpg, but the diff shows no added files, and there is no evidence the specific image was added under frontend/public (or equivalent).",
       "evidence": [
-        "backend/main.mo (predictAdmission truncated)"
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "requirement": "Adjust the predictions UI to reflect that the results list contains only eligible colleges (predicted_rank <= closing_rank) and ensure the table renders correctly with the filtered results returned by the backend.",
-      "reason": "The main page file is truncated before the results table rendering and any updated explanatory user-facing text, so it is not possible to verify that the table/copy reflect “eligible only” results as required.",
-      "evidence": [
-        "frontend/src/pages/MhtCetPredictorFormPage.tsx (truncated)"
+        "frontend/src/pages/HomePage.tsx (img src=\"/assets/photo_2026-02-13_15-36-18-1.jpg\")",
+        "File diff summary: Added: 0"
       ]
     }
   ],
-  "hallucinated_features": [
-    {
-      "description": "Global UI/theme restyling (earth-tone OKLCH palette)",
-      "reason": "Not requested by the BuildRequest; REQ-2 only asked to adjust the predictions UI to reflect eligible-only results, not to change global styling.",
-      "evidence": [
-        "frontend/src/index.css (described in frontend-file-summaries.txt)"
-      ]
-    },
-    {
-      "description": "Tailwind configuration changes (extended color tokens, radius, Inter font)",
-      "reason": "Not requested; unrelated to eligibility filtering or results table semantics.",
-      "evidence": [
-        "frontend/tailwind.config.js (described in frontend-file-summaries.txt)"
-      ]
-    },
-    {
-      "description": "HTML document title changed to \"MHT-CET College Predictor v2\"",
-      "reason": "Not requested; unrelated to backend filtering or the predictions table behavior/copy.",
-      "evidence": [
-        "frontend/index.html (described in frontend-file-summaries.txt)"
-      ]
-    },
-    {
-      "description": "`Prediction` type includes an `eligible : Bool` field",
-      "reason": "REQ-1 requires filtering out non-eligible records rather than marking them; adding an eligibility flag is extra/unrequested and could indicate returning non-eligible entries instead of filtering (though return behavior is not visible due to truncation).",
-      "evidence": [
-        "backend/main.mo (type Prediction includes eligible : Bool)"
-      ]
-    }
-  ],
-  "confidence": 0.48,
+  "hallucinated_features": [],
+  "confidence": 0.74,
   "changed_files": [
-    "backend/main.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/pages/MhtCetPredictorFormPage.tsx",
+    "frontend/src/index.css",
+    "frontend/src/pages/HomePage.tsx",
     "project_state.json"
   ]
 }
