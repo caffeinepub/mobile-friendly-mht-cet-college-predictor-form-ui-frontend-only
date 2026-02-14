@@ -1,10 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Add the uploaded banner image to the Home page hero and update the site’s global theme to a navy blue palette with faint/light blue accents.
+**Goal:** Retry the production “go-live” deployment so the application completes going live instead of getting stuck on an endless loading state.
 
 **Planned changes:**
-- Add `photo_2026-02-13_15-36-18-1.jpg` as a static frontend asset and render it at the very top of the Home page hero section (above the main heading), centered, responsive, and preserving aspect ratio (no distortion), with English alt text.
-- Update the global CSS theme tokens/variables so the primary color becomes navy blue and accents become faint/light blue across backgrounds, buttons, links, icons, cards, and borders; ensure both light and dark modes remain readable and consistent without editing `frontend/src/components/ui/*`.
+- Add a user confirmation step to trigger a new production go-live/push retry.
+- Ensure the retry attempt completes with a clear success state rather than indefinite loading.
+- If the retry fails, surface a clear failure outcome (error or status) instead of leaving the UI stuck.
 
-**User-visible outcome:** The Home page displays a centered, responsive banner above the hero heading, and the entire site adopts a navy + faint/light blue color theme in both light and dark modes.
+**User-visible outcome:** After confirming, the user can trigger a new production go-live attempt and will see a clear success completion or an explicit failure/status message rather than endless loading.

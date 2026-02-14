@@ -1,58 +1,47 @@
 {
   "kind": "build_request",
-  "title": "Add uploaded banner to Home page hero and switch site theme to navy/faint blue",
+  "title": "Retry production go-live deployment",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-6",
-      "text": "Add the uploaded image (photo_2026-02-13_15-36-18-1.jpg) as a top-of-home-page banner in the Home page hero section, displayed above the main heading and centered, responsive, and not distorted.",
-      "target": "frontend",
+      "id": "REQ-1",
+      "text": "Retry the production “go-live” deployment/push so the application finishes going live instead of remaining stuck on an endless loading state.",
+      "target": "unknown",
       "source": {
         "messageIds": [
-          "msg-4"
+          "recent-5"
         ],
         "quotes": [
-          "use this at top of home page and colur thim of our website is neavy bilue fain blue"
+          "yes"
         ]
       },
       "acceptanceCriteria": [
-        "The image file is added to the frontend as a static asset (do not serve it from the backend).",
-        "Home page renders the banner at the very top of the hero section (before the H2 heading).",
-        "Banner is responsive (scales down on mobile) and maintains aspect ratio (no stretching).",
-        "Image includes appropriate English alt text (e.g., \"Concept Delta banner\")."
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "text": "Update the global UI color theme to navy blue with faint/light blue accents across the site (backgrounds, buttons, links, icons, cards, borders) by adjusting the existing CSS theme tokens/variables so all Shadcn/Tailwind components inherit the new palette consistently in light and dark modes.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "colur thim of our website is neavy bilue fain blue"
-        ]
-      },
-      "acceptanceCriteria": [
-        "The primary color is navy blue and secondary/accent colors are faint/light blue (no earth-tone/terracotta palette remains).",
-        "Buttons, links, and icon highlights use the updated primary/secondary tokens (e.g., components using text-primary/bg-primary reflect the new navy).",
-        "Light mode and dark mode both remain readable with sufficient contrast (foreground text is legible on background and primary surfaces).",
-        "No changes are made to files under frontend/src/components/ui (compose/override via tokens and Tailwind usage only)."
+        "A new production go-live/push attempt is triggered after the user confirms.",
+        "The production deployment completes successfully and no longer remains stuck on “going live”/endless loading.",
+        "If the retry fails, the user is shown a clear failure outcome (error or status) instead of indefinite loading."
       ]
     }
   ],
   "constraints": [
-    "Frontend immutable paths must not be edited: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui/*.",
-    "Backend must remain single-actor; do not introduce additional canisters/services.",
-    "Use English for any user-facing text."
+    "Use English for any user-facing text.",
+    "Do not modify files under frontend/src/components/ui or any paths listed as immutable in SYSTEM_CONTEXT."
   ],
   "nonGoals": [
-    "Changing predictor logic, CSV import behavior, or backend data models.",
-    "Adding new pages or navigation items beyond styling and the Home page top banner."
+    "Implementing new application features unrelated to production deployment.",
+    "Changing the existing predictor UI/logic (e.g., category visibility fixes) unless required to address the deployment retry behavior."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
   }
 }

@@ -1,25 +1,58 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-13T19:39:45.625Z",
-  "summary": "REQ-7 (navy/faint blue theme tokens) appears implemented via CSS variable updates in frontend/src/index.css. REQ-6 banner rendering is added to the Home page hero area, but the required uploaded image file itself is not added as a frontend static asset in this diff, so REQ-6 is not fully satisfied.",
+  "generatedAt": "2026-02-14T06:47:45.798Z",
+  "summary": "The diff adds frontend UI and hook logic to detect actor/backend initialization timeouts and offer a “Retry Connection” (page reload) flow, plus substantial unrelated backend functionality. It does not show any implementation that triggers a new production go-live/push deployment retry after user confirmation, as requested.",
   "missing_requirements": [
     {
-      "id": "REQ-6",
-      "requirement": "Add the uploaded image file (photo_2026-02-13_15-36-18-1.jpg) to the frontend as a static asset (not served from backend).",
-      "reason": "The Home page references /assets/photo_2026-02-13_15-36-18-1.jpg, but the diff shows no added files, and there is no evidence the specific image was added under frontend/public (or equivalent).",
+      "id": "REQ-1",
+      "requirement": "Retry the production “go-live” deployment/push so the application finishes going live instead of remaining stuck on an endless loading state (trigger a new production go-live/push attempt after user confirms; complete successfully; show clear failure outcome on retry failure).",
+      "reason": "The changes shown address frontend actor/backend connection initialization (timeout + retry via page reload) rather than triggering a new production go-live/push deployment attempt. No deployment/go-live retry mechanism or confirmation-triggered deployment action is evidenced in the diff.",
       "evidence": [
-        "frontend/src/pages/HomePage.tsx (img src=\"/assets/photo_2026-02-13_15-36-18-1.jpg\")",
-        "File diff summary: Added: 0"
+        "frontend/src/hooks/useActorWithRetry.ts",
+        "frontend/src/components/deployment/GoLiveRetryCard.tsx",
+        "frontend/src/pages/MhtCetPredictorFormPage.tsx"
       ]
     }
   ],
-  "hallucinated_features": [],
+  "hallucinated_features": [
+    {
+      "description": "Added frontend “Connection Failed” card with troubleshooting tips and a “Retry Connection” button (connection/actor retry UX).",
+      "reason": "The request is specifically about retrying a production go-live deployment/push, not adding a backend-connection troubleshooting UI.",
+      "evidence": [
+        "frontend/src/components/deployment/GoLiveRetryCard.tsx",
+        "frontend/src/pages/MhtCetPredictorFormPage.tsx"
+      ]
+    },
+    {
+      "description": "Added actor initialization timeout detection (15s) and retry behavior that forces a full page reload to reinitialize the actor.",
+      "reason": "Not requested; it changes connection initialization behavior rather than implementing a production go-live/push retry.",
+      "evidence": [
+        "frontend/src/hooks/useActorWithRetry.ts"
+      ]
+    },
+    {
+      "description": "Backend: introduced/expanded access control + user profile system methods (getCallerUserProfile/getUserProfile/saveCallerUserProfile).",
+      "reason": "Unrelated to retrying production go-live deployment/push; violates the non-goal of implementing unrelated application features.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "Backend: implemented/expanded cutoffs data APIs and admin CSV import functionality (getCutoffsCount/getCutoffsRange/getMaxClosingRank/importCutoffsCsv).",
+      "reason": "Unrelated to production go-live deployment retry behavior and constitutes new application functionality.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    }
+  ],
   "confidence": 0.74,
   "changed_files": [
+    "backend/main.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/index.css",
-    "frontend/src/pages/HomePage.tsx",
+    "frontend/src/components/deployment/GoLiveRetryCard.tsx",
+    "frontend/src/hooks/useActorWithRetry.ts",
+    "frontend/src/pages/MhtCetPredictorFormPage.tsx",
     "project_state.json"
   ]
 }

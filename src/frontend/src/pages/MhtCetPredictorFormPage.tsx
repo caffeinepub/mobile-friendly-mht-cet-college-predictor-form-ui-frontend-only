@@ -8,12 +8,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, AlertCircle, Upload, CheckCircle2, Database, Info } from 'lucide-react';
-import { useActor } from '@/hooks/useActor';
+import { useActorWithRetry } from '@/hooks/useActorWithRetry';
 import { Candidature, type Prediction, type ImportResult } from '@/backend';
 import { Separator } from '@/components/ui/separator';
 import { LeadCaptureForm } from '@/components/lead-capture/LeadCaptureForm';
 import { predictorDefaults } from '@/utils/predictorDefaults';
 import { AdminLeadExportCard } from '@/components/admin/AdminLeadExportCard';
+import { GoLiveRetryCard } from '@/components/deployment/GoLiveRetryCard';
 
 export default function MhtCetPredictorFormPage() {
   // Step 1 inputs: percentile (required), category (required), gender (optional), branch preference (optional)
@@ -44,10 +45,7 @@ export default function MhtCetPredictorFormPage() {
   // Maximum closing rank state
   const [maxClosingRank, setMaxClosingRank] = useState<bigint | null>(null);
 
-  const { actor, isFetching: actorFetching } = useActor();
-
-  // Actor initialization state
-  const [actorInitError, setActorInitError] = useState<boolean>(false);
+  const { actor, isFetching: actorFetching, isError: actorError, error: actorErrorDetails, retryActorInit } = useActorWithRetry();
 
   // Check cutoffs count on mount - only when actor is ready
   useEffect(() => {
@@ -57,7 +55,6 @@ export default function MhtCetPredictorFormPage() {
 
     const checkCutoffsCount = async () => {
       setIsCheckingCutoffs(true);
-      setActorInitError(false);
       
       try {
         const count = await actor.getCutoffsCount();
@@ -70,7 +67,6 @@ export default function MhtCetPredictorFormPage() {
         }
       } catch (err) {
         console.error('Failed to fetch cutoffs count:', err);
-        setActorInitError(true);
       } finally {
         setIsCheckingCutoffs(false);
       }
@@ -252,30 +248,33 @@ export default function MhtCetPredictorFormPage() {
     }
   };
 
-  // Show connecting state while actor is initializing
-  const isConnecting = actorFetching || (!actor && !actorInitError);
+  // Determine connection state
+  const isConnecting = actorFetching && !actor;
+  const hasConnectionError = actorError && !actor && !actorFetching;
   const hasCutoffData = cutoffsCount !== null && cutoffsCount > BigInt(0);
+
+  // If there's a connection error, show retry card
+  if (hasConnectionError) {
+    return (
+      <div className="space-y-6">
+        <GoLiveRetryCard 
+          onRetry={retryActorInit}
+          isRetrying={actorFetching}
+          errorMessage={actorErrorDetails instanceof Error ? actorErrorDetails.message : undefined}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       {/* Connecting State */}
       {isConnecting && (
-        <Alert className="border-muted bg-muted/30">
+        <Alert className="border-muted bg-muted">
           <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
           <AlertTitle className="text-foreground">Connecting...</AlertTitle>
           <AlertDescription className="text-muted-foreground">
             Establishing connection to the backend. Please wait a moment.
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {/* Actor Initialization Error */}
-      {actorInitError && !isConnecting && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Connection Error</AlertTitle>
-          <AlertDescription>
-            Failed to connect to the backend. Please refresh the page and try again.
           </AlertDescription>
         </Alert>
       )}
@@ -417,21 +416,24 @@ export default function MhtCetPredictorFormPage() {
             {/* Percentile Input */}
             <div className="space-y-2">
               <Label htmlFor="percentile" className="text-base font-medium">
-                Percentile <span className="text-destructive">*</span>
+                MHT-CET Percentile <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="percentile"
                 type="number"
+                step="0.01"
                 min="0"
                 max="100"
-                step="0.01"
-                placeholder="Enter your MHT-CET percentile (0-100)"
+                placeholder="Enter your percentile (0-100)"
                 value={percentile}
                 onChange={handlePercentileChange}
+                required
                 disabled={!actor || isLoading}
                 className="h-11 text-base"
-                required
               />
+              <p className="text-xs text-muted-foreground">
+                Enter your MHT-CET percentile score (e.g., 95.5)
+              </p>
             </div>
 
             {/* Category Select */}
@@ -441,22 +443,28 @@ export default function MhtCetPredictorFormPage() {
               </Label>
               <Select
                 value={category}
-                onValueChange={(value) => setCategory(value)}
+                onValueChange={setCategory}
                 disabled={!actor || isLoading}
                 required
               >
-                <SelectTrigger id="category" className="h-11 text-base">
+                <SelectTrigger id="category" className="h-11 text-base bg-background">
                   <SelectValue placeholder="Select your category" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-popover">
                   <SelectItem value="OPEN">OPEN</SelectItem>
                   <SelectItem value="OBC">OBC</SelectItem>
+                  <SelectItem value="EWS">EWS</SelectItem>
                   <SelectItem value="SC">SC</SelectItem>
                   <SelectItem value="ST">ST</SelectItem>
-                  <SelectItem value="EWS">EWS</SelectItem>
-                  <SelectItem value="TFWS">TFWS</SelectItem>
+                  <SelectItem value="NT1">NT1</SelectItem>
+                  <SelectItem value="NT2">NT2</SelectItem>
+                  <SelectItem value="NT3">NT3</SelectItem>
+                  <SelectItem value="VJ">VJ</SelectItem>
                 </SelectContent>
               </Select>
+              <p className="text-xs text-muted-foreground">
+                Select your reservation category
+              </p>
             </div>
 
             {/* Gender Select (Optional) */}
@@ -466,21 +474,23 @@ export default function MhtCetPredictorFormPage() {
               </Label>
               <Select
                 value={gender}
-                onValueChange={(value) => setGender(value)}
+                onValueChange={setGender}
                 disabled={!actor || isLoading}
               >
-                <SelectTrigger id="gender" className="h-11 text-base">
+                <SelectTrigger id="gender" className="h-11 text-base bg-background">
                   <SelectValue placeholder="Select gender (optional)" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-popover">
                   <SelectItem value="MALE">Male</SelectItem>
                   <SelectItem value="FEMALE">Female</SelectItem>
-                  <SelectItem value="ANY">Any</SelectItem>
                 </SelectContent>
               </Select>
+              <p className="text-xs text-muted-foreground">
+                Filter results by gender-specific seats (leave blank for all)
+              </p>
             </div>
 
-            {/* Branch Preference Input (Optional) */}
+            {/* Branch Preference (Optional) */}
             <div className="space-y-2">
               <Label htmlFor="branch" className="text-base font-medium">
                 Branch Preference <span className="text-muted-foreground text-sm">(Optional)</span>
@@ -488,12 +498,15 @@ export default function MhtCetPredictorFormPage() {
               <Input
                 id="branch"
                 type="text"
-                placeholder="e.g., Computer Engineering (optional)"
+                placeholder="e.g., Computer Engineering"
                 value={branchPreference || ''}
                 onChange={(e) => setBranchPreference(e.target.value || undefined)}
                 disabled={!actor || isLoading}
                 className="h-11 text-base"
               />
+              <p className="text-xs text-muted-foreground">
+                Filter results by specific branch (leave blank for all branches)
+              </p>
             </div>
 
             {/* Error Display */}
@@ -514,49 +527,51 @@ export default function MhtCetPredictorFormPage() {
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Generating Predictions...
                 </>
               ) : (
-                'Get Predictions'
+                'Get College Predictions'
               )}
             </Button>
 
-            {!hasCutoffData && !isConnecting && (
+            {!hasCutoffData && (
               <p className="text-sm text-muted-foreground text-center">
-                Upload cutoff data above to enable predictions
+                Please upload cutoff data above to enable predictions
               </p>
             )}
           </form>
         </CardContent>
       </Card>
 
+      {/* Lead Capture Modal */}
+      {showLeadCapture && (
+        <LeadCaptureForm
+          isOpen={showLeadCapture}
+          onSubmit={handleLeadSubmit}
+          isSubmitting={isSubmittingLead}
+        />
+      )}
+
       {/* Results Section */}
       {predictions && predictions.length > 0 && estimatedRank !== null && (
         <Card className="border-border/50 shadow-lg">
           <CardHeader className="space-y-2 pb-6">
-            <CardTitle className="text-xl sm:text-2xl">Your Predictions</CardTitle>
+            <CardTitle className="text-xl sm:text-2xl">Your College Predictions</CardTitle>
             <CardDescription className="text-base">
-              Based on your percentile of <strong>{percentile}</strong>, your estimated rank is{' '}
-              <Badge variant="secondary" className="text-base px-3 py-1">
-                {estimatedRank.toLocaleString()}
-              </Badge>
+              Based on your percentile of <strong>{percentile}%</strong>, your estimated rank is approximately{' '}
+              <strong className="text-primary">{estimatedRank.toLocaleString()}</strong>
             </CardDescription>
-            {maxClosingRank !== null && (
-              <p className="text-sm text-muted-foreground">
-                Maximum closing rank in dataset: {maxClosingRank.toString()}
-              </p>
-            )}
           </CardHeader>
           <CardContent>
             <div className="rounded-lg border border-border overflow-hidden">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-muted/50">
-                    <TableHead className="font-semibold">College</TableHead>
+                    <TableHead className="font-semibold">College Name</TableHead>
                     <TableHead className="font-semibold">Branch</TableHead>
+                    <TableHead className="font-semibold">Category</TableHead>
                     <TableHead className="font-semibold text-right">Closing Rank</TableHead>
-                    <TableHead className="font-semibold text-center">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -564,36 +579,32 @@ export default function MhtCetPredictorFormPage() {
                     <TableRow key={idx} className="hover:bg-muted/30">
                       <TableCell className="font-medium">{pred.college_name}</TableCell>
                       <TableCell>{pred.branch_name}</TableCell>
-                      <TableCell className="text-right">{Number(pred.closing_rank).toLocaleString()}</TableCell>
-                      <TableCell className="text-center">
-                        {pred.eligible ? (
-                          <Badge variant="default" className="bg-green-600 hover:bg-green-700">
-                            Eligible
-                          </Badge>
-                        ) : (
-                          <Badge variant="secondary">Not Eligible</Badge>
-                        )}
+                      <TableCell>
+                        <Badge variant="secondary" className="bg-background border border-border">
+                          {category}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right font-mono">
+                        {Number(pred.closing_rank).toLocaleString()}
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </div>
+
             {predictions.length === 0 && (
-              <p className="text-center text-muted-foreground py-8">
-                No eligible colleges found for your criteria. Try adjusting your filters.
-              </p>
+              <Alert className="mt-4">
+                <Info className="h-4 w-4" />
+                <AlertTitle>No Matches Found</AlertTitle>
+                <AlertDescription>
+                  No colleges found matching your criteria. Try adjusting your filters or check back after more data is uploaded.
+                </AlertDescription>
+              </Alert>
             )}
           </CardContent>
         </Card>
       )}
-
-      {/* Lead Capture Modal */}
-      <LeadCaptureForm
-        isOpen={showLeadCapture}
-        onSubmit={handleLeadSubmit}
-        isSubmitting={isSubmittingLead}
-      />
     </div>
   );
 }

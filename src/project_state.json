@@ -1,43 +1,24 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Website project: update home page top section content and apply a navy blue / faint blue color theme.",
+  "summary": "New project",
   "architectural_notes": [],
-  "known_issues": [],
-  "isFixRequest": false,
+  "known_issues": [
+    "Production deployment can get stuck on “going live” (endless loading); may require retrying the go-live/production push."
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-add-the-uploaded-image-photo-2026-02-13-15-36-18-1-jpg-as-a-top-of-home-page-banner-in-the-home-page-hero-section-displayed-above-the-main-heading-and-centered-responsive-and-not-distorted",
-      "title": "Add the uploaded image (photo_2026-02-13_15-36-18-1.jpg) as a top-of-home-page banner in the Home page hero section, displayed above the main heading and centered, responsive, and not distorted.",
+      "id": "feature-retry-the-production-go-live-deployment-push-so-the-application-finishes-going-live-instead-of-remaining-stuck-on-an-endless-loading-state",
+      "title": "Retry the production “go-live” deployment/push so the application finishes going live instead of remaining stuck on an endless loading state.",
       "reqIds": [
-        "REQ-6"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-global-ui-color-theme-to-navy-blue-with-faint-light-blue-accents-across-the-site-backgrounds-buttons-links-icons-cards-borders-by-adjusting-the-existing-css-theme-tokens-variables-so-all-shadcn-tailwind-components-inherit-the-new-palette-consistently-in-light-and-dark-modes",
-      "title": "Update the global UI color theme to navy blue with faint/light blue accents across the site (backgrounds, buttons, links, icons, cards, borders) by adjusting the existing CSS theme tokens/variables so all Shadcn/Tailwind components inherit the new palette consistently in light and dark modes.",
-      "reqIds": [
-        "REQ-7"
+        "REQ-1"
       ],
       "version": 1
     }
   ],
-  "new_feature_requests": [
-    {
-      "id": "AR-1",
-      "summary": "Update the top of the home page with the provided content.",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-2",
-      "summary": "Set the website color theme to navy blue with faint/light blue accents.",
-      "reqIds": [],
-      "status": "pending"
-    }
-  ],
-  "projectName": "Add uploaded banner to Home page hero and switch site theme to navy/faint blue",
+  "new_feature_requests": [],
+  "projectName": "Retry production go-live deployment",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

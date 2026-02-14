@@ -1,7 +1,7 @@
 {
   "frontend/src/App.tsx": "Main application component with simple hash-free page routing between Home, Predictor, How it Works, and Contact/Support, wrapped in ErrorBoundary and SiteLayout.",
-  "frontend/src/pages/MhtCetPredictorFormPage.tsx": "Complete MHT-CET predictor form with fixed Select crash (no empty-string values, optional selects use undefined), CSV upload section framed as optional, disabled prediction submission when cutoff data is missing, and graceful no-data UX.",
-  "frontend/src/index.css": "Global styles with navy blue primary and faint/light blue accent OKLCH color system for both light and dark modes, maintaining professional education-focused aesthetic with cool blue tones.",
+  "frontend/src/pages/MhtCetPredictorFormPage.tsx": "Complete MHT-CET predictor form using useActorWithRetry hook for connection error handling, displaying GoLiveRetryCard when actor initialization fails or times out, with bounded loading states and clear retry UX.",
+  "frontend/src/index.css": "Global styles with navy blue primary and faint/light blue accent OKLCH color system for both light and dark modes, plus CSS rule to ensure Radix Select popper wrapper has proper z-index stacking above other elements (moved outside @layer for production build compatibility).",
   "frontend/tailwind.config.js": "Tailwind configuration with extended color tokens, custom border radius (xl variant added), and Inter font family for a polished, professional look.",
   "frontend/index.html": "HTML entry point with updated document title \"MHT-CET College Predictor v2\" displayed in browser tab.",
   "frontend/src/components/lead-capture/LeadCaptureForm.tsx": "Lead capture modal component with mandatory Telegram confirmation checkbox validation, non-dismissible dialog behavior (no outside click or escape key), and form fields for name, mobile, WhatsApp (all required), and optional email.",
@@ -15,5 +15,8 @@
   "frontend/src/pages/HomePage.tsx": "Home page with Concept Delta banner image at the top, followed by education-focused value proposition, feature highlights (accurate guidance, transparency, privacy), and clear call-to-action leading to the Predictor.",
   "frontend/src/pages/PredictorPage.tsx": "Predictor page wrapper with intro section, data upload guidance alert, and embedded MhtCetPredictorFormPage component.",
   "frontend/src/pages/HowItWorksPage.tsx": "Informational page explaining the four-step prediction process (input details, rank calculation, cutoff matching, results) with clear sections and important notes about data requirements.",
-  "frontend/src/pages/ContactSupportPage.tsx": "Contact and support page with support guidelines, contact information placeholder, common issues FAQ, and additional resources section."
+  "frontend/src/pages/ContactSupportPage.tsx": "Contact and support page with support guidelines, contact information placeholder, common issues FAQ, and additional resources section.",
+  "frontend/src/hooks/useActor.ts": "Enhanced actor initialization hook with 15-second timeout, proper error handling, and manual retry functionality exposed via retryActorInit callback, with complete return type including isError, error, and retryActorInit properties.",
+  "frontend/src/components/deployment/GoLiveRetryCard.tsx": "Reusable UI component that displays connection failure state with clear error messaging, troubleshooting steps, and a retry button for re-attempting backend connection.",
+  "frontend/src/hooks/useActorWithRetry.ts": "Wrapper hook around useActor that adds timeout detection (15 seconds), error state tracking, and retry functionality via page reload without modifying the auto-generated useActor.ts file."
 }

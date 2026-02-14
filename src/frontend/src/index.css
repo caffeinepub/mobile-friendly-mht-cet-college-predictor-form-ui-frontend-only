@@ -95,3 +95,8 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
+
+/* Ensure Radix Select dropdown has proper stacking and fully opaque background */
+[data-radix-popper-content-wrapper] {
+  z-index: 50;
+}

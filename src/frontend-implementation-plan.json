@@ -1,49 +1,36 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Home hero banner + navy/light-blue global theme",
+  "title": "Deployment go-live retry UX and no-infinite-loading safeguards",
   "requirements": [
     {
-      "id": "REQ-6",
-      "summary": "Add the uploaded banner image to the top of the Home page hero section with responsive, non-distorted rendering and English alt text.",
+      "id": "REQ-1",
+      "summary": "Prevent infinite “going live/connecting” states by adding a user-confirmed retry action and clear failure UI when the production go-live attempt stalls or fails.",
       "acceptanceCriteria": [
-        "The image file is added to the frontend as a static asset (do not serve it from the backend).",
-        "Home page renders the banner at the very top of the hero section (before the H2 heading).",
-        "Banner is responsive (scales down on mobile) and maintains aspect ratio (no stretching).",
-        "Image includes appropriate English alt text (e.g., \"Concept Delta banner\")."
+        "A new production go-live/push attempt is triggered after the user confirms.",
+        "The production deployment completes successfully and no longer remains stuck on “going live”/endless loading.",
+        "If the retry fails, the user is shown a clear failure outcome (error or status) instead of indefinite loading."
       ],
       "file_operations": [
         {
-          "path": "frontend/public/assets/photo_2026-02-13_15-36-18-1.jpg",
+          "path": "frontend/src/hooks/useActor.ts",
+          "operation": "modify",
+          "description": "Add a bounded initialization strategy to avoid indefinite loading (e.g., wrap actor creation/initialization in a timeout that fails fast), and expose additional hook state for the UI (e.g., actorInitError details and a retry function that re-triggers actor initialization). Ensure retry clears/refreshes relevant cached state so a new attempt actually occurs."
+        },
+        {
+          "path": "frontend/src/components/deployment/GoLiveRetryCard.tsx",
           "operation": "create",
-          "description": "Add the uploaded banner image as a static frontend asset (copy from the provided upload) so it can be referenced directly by the Home page without involving the backend."
+          "description": "Create a reusable UI component that communicates a stalled/failed go-live or backend connection state and provides a user-confirmed “Retry go-live” action plus a clear failure outcome if retries keep failing. Use shadcn-ui components (e.g., Card/Alert/Button and optionally AlertDialog for confirmation) to present status and confirmation; verify the component's usage instructions before implementing."
         },
         {
-          "path": "frontend/src/pages/HomePage.tsx",
+          "path": "frontend/src/pages/MhtCetPredictorFormPage.tsx",
           "operation": "modify",
-          "description": "Update the hero section to render the new banner image above the main H2 heading, centered, responsive, and preserving aspect ratio (e.g., using sizing + object-fit containment to avoid distortion) with English alt text like \"Concept Delta banner\"."
-        }
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "summary": "Switch the global theme tokens to a navy primary with faint/light blue accents so Tailwind/Shadcn styling updates site-wide in light and dark modes without editing shadcn UI component files.",
-      "acceptanceCriteria": [
-        "The primary color is navy blue and secondary/accent colors are faint/light blue (no earth-tone/terracotta palette remains).",
-        "Buttons, links, and icon highlights use the updated primary/secondary tokens (e.g., components using text-primary/bg-primary reflect the new navy).",
-        "Light mode and dark mode both remain readable with sufficient contrast (foreground text is legible on background and primary surfaces).",
-        "No changes are made to files under frontend/src/components/ui (compose/override via tokens and Tailwind usage only)."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Replace the existing earth-tone CSS variables with a navy-blue primary and faint/light-blue secondary/accent palette for both :root and .dark so Tailwind/Shadcn tokens (primary/secondary/accent/muted/border/ring/etc.) inherit the new colors consistently. Use the shadcn-ui token approach (CSS variables consumed by Tailwind colors). Verify the component's usage instructions before implementing."
+          "description": "Replace the current potentially endless “Connecting...” experience with: (1) a time-bounded connecting phase driven by the updated useActor() state, (2) a clear error/status block when initialization times out/fails, and (3) a visible, user-confirmed retry action by rendering the new GoLiveRetryCard component. Ensure all user-facing text is in English and that failure states do not leave the UI in indefinite loading. Verify the component's usage instructions before implementing."
         },
         {
-          "path": "frontend/index.css",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Align any parallel/global CSS theme tokens with the same navy + faint/light blue palette in both light and dark modes to ensure consistent styling regardless of which global stylesheet is imported by the app. Use the shadcn-ui token approach (CSS variables consumed by Tailwind colors). Verify the component's usage instructions before implementing."
+          "description": "Wire any global retry/status UI requirements if needed (e.g., ensure the page(s) that can show the stuck “going live” state render the retry experience consistently). Keep routing intact and avoid unrelated UI/logic changes; verify the component's usage instructions before implementing."
         }
       ]
     }

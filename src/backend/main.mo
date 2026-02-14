@@ -315,7 +315,9 @@ actor {
   };
 
   // Admin-only: Export leads to CSV
-  public query ({ caller }) func exportLeadsAsCsv() : async Text {
+  public query ({
+    caller
+  }) func exportLeadsAsCsv() : async Text {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can export leads");
     };
@@ -342,4 +344,5 @@ actor {
 
     header # csvBody;
   };
+
 };

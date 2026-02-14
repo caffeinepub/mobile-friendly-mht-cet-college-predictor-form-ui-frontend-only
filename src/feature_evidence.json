@@ -2,10 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-the-uploaded-image-photo-2026-02-13-15-36-18-1-jpg-as-a-top-of-home-page-banner-in-the-home-page-hero-section-displayed-above-the-main-heading-and-centered-responsive-and-not-distorted",
-      "featureTitle": "Add the uploaded image (photo_2026-02-13_15-36-18-1.jpg) as a top-of-home-page banner in the Home page hero section, displayed above the main heading and centered, responsive, and not distorted.",
+      "featureId": "feature-retry-the-production-go-live-deployment-push-so-the-application-finishes-going-live-instead-of-remaining-stuck-on-an-endless-loading-state",
+      "featureTitle": "Retry the production “go-live” deployment/push so the application finishes going live instead of remaining stuck on an endless loading state.",
       "files": [
-        "frontend/src/pages/HomePage.tsx"
+        "frontend/src/components/deployment/GoLiveRetryCard.tsx",
+        "frontend/src/pages/MhtCetPredictorFormPage.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -16,26 +17,7 @@
         "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-6"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-update-the-global-ui-color-theme-to-navy-blue-with-faint-light-blue-accents-across-the-site-backgrounds-buttons-links-icons-cards-borders-by-adjusting-the-existing-css-theme-tokens-variables-so-all-shadcn-tailwind-components-inherit-the-new-palette-consistently-in-light-and-dark-modes",
-      "featureTitle": "Update the global UI color theme to navy blue with faint/light blue accents across the site (backgrounds, buttons, links, icons, cards, borders) by adjusting the existing CSS theme tokens/variables so all Shadcn/Tailwind components inherit the new palette consistently in light and dark modes.",
-      "files": [
-        "frontend/src/index.css"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-7"
+        "REQ-1"
       ],
       "confidence": "high"
     }
